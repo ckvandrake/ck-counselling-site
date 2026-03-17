@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pricing and packages for counselling services - Individual sessions, couples therapy, and corporate wellness">
+    <title>Fees - Cronje Karuna</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <a href="index.html" style="text-decoration: none; color: inherit;">
+                        <h1>Cronje Karuna</h1>
+                    </a>
+                </div>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html#home" class="nav-link">Home</a></li>
+                    <li><a href="index.html#services" class="nav-link">Services</a></li>
+                    <li><a href="index.html#booking" class="nav-link">Book a Session</a></li>
+                    <li><a href="get-in-touch.html" class="nav-link">Get in Touch</a></li>
+                    <li><a href="work-with-me.html" class="nav-link">Fees</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="index.html#login" class="nav-link" id="loginLink">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Pricing Section -->
+    <section class="pricing">
+        <div class="container">
+            <h2 class="section-title">Fees</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Single Session</h3>
+                    <div class="price">$120</div>
+                    <p class="price-period">per hour</p>
+                    <ul class="pricing-features">
+                        <li>1 hour session</li>
+                        <li>Online (Walk & Talk optional)</li>
+                        <li>Personalized approach</li>
+                    </ul>
+                    <a href="payment.html?plan=single" class="btn btn-primary">Purchase Now</a>
+                </div>
+                <div class="pricing-card featured">
+                    <div class="badge">Popular</div>
+                    <h3>Discount Bundle</h3>
+                    <div class="price">$960</div>
+                    <p class="price-period">12 sessions ($80 per hour)</p>
+                    <ul class="pricing-features">
+                        <li>Can be used by individuals and couples</li>
+                    </ul>
+                    <a href="payment.html?plan=bundle" class="btn btn-primary">Purchase Now</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>Couples Package</h3>
+                    <div class="price">$500</div>
+                    <p class="price-period">package</p>
+                    <ul class="pricing-features">
+                        <li>2 private intake sessions (1 hour each)</li>
+                        <li>3 joint sessions on Zoom</li>
+                        <li>Comprehensive assessment</li>
+                    </ul>
+                    <a href="payment.html?plan=couples" class="btn btn-primary">Purchase Now</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>4 Session Package</h3>
+                    <div class="price">$400</div>
+                    <p class="price-period">4 sessions</p>
+                    <ul class="pricing-features">
+                        <li>Flexible use within 1 month</li>
+                    </ul>
+                    <a href="payment.html?plan=4pack" class="btn btn-primary">Purchase Now</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>The Reset Room</h3>
+                    <ul class="pricing-features">
+                        <li>Corporate wellness solution</li>
+                        <li>Pricing tailored to suit your needs</li>
+                    </ul>
+                    <a href="get-in-touch.html" class="btn btn-primary">Inquire Now</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>Donation Based Counselling</h3>
+                    <p class="pricing-description">For those in need who lack resources.</p>
+                    <a href="get-in-touch.html" class="btn btn-primary">Apply Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Cronje Karuna Van Drake</h3>
+                    <p>Counselling Services</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Email: ckvandrake@gmail.com</p>
+                    <p>Phone: +27 82 430 6828</p>
+                    <p>Location: Johannesburg central</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="index.html#services">1:1 Counselling</a></li>
+                        <li><a href="index.html#services">Couples Sessions</a></li>
+                        <li><a href="index.html#services">The Reset Room</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Cronje Karuna Van Drake. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="supabaseConfig.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabaseClient.js"></script>
+    <script src="pricing.js"></script>
+</body>
+</html>

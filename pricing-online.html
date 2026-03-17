@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pricing for online counselling - Individual sessions, couples therapy. International clients, USD.">
+    <title>Online Sessions – Fees - Cronje Karuna</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <a href="index.html" style="text-decoration: none; color: inherit;">
+                        <h1>Cronje Karuna</h1>
+                    </a>
+                </div>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html#home" class="nav-link">Home</a></li>
+                    <li><a href="index.html#services" class="nav-link">Services</a></li>
+                    <li><a href="index.html#booking" class="nav-link">Book a Session</a></li>
+                    <li><a href="get-in-touch.html" class="nav-link">Get in Touch</a></li>
+                    <li><a href="work-with-me.html" class="nav-link">Fees</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="index.html#login" class="nav-link" id="loginLink">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Pricing Section - Online / International only -->
+    <section class="pricing">
+        <div class="container">
+            <h2 class="section-title">Online Global Sessions</h2>
+            <p class="section-intro" style="text-align: center; margin-bottom: 2rem;">Remote online sessions via Zoom for international clients.</p>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Single Session</h3>
+                    <div class="price">$199</div>
+                    <p class="price-period">per 60-minute session</p>
+                    <ul class="pricing-features">
+                        <li>1 x 60-minute online session</li>
+                        <li>Ideal for first-time or single-session work</li>
+                    </ul>
+                    <a href="checkout-single.html" class="btn btn-primary">Purchase Now</a>
+                </div>
+
+                <div class="pricing-card">
+                    <h3>4 Hour Package</h3>
+                    <div class="price">$699</div>
+                    <p class="price-period">4 hours ($175/hour)</p>
+                    <ul class="pricing-features">
+                        <li>Four hours of flexible online session time</li>
+                        <li>Can be split into 60-minute or 30-minute sessions</li>
+                    </ul>
+                    <a href="checkout-four.html" class="btn btn-primary">Purchase Now</a>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="badge">Most Popular</div>
+                    <h3>8 Hour Bundle</h3>
+                    <div class="price">$1199</div>
+                    <p class="price-period">8 hours ($149/hour)</p>
+                    <p class="value-line">Best value for ongoing work</p>
+                    <ul class="pricing-features">
+                        <li>Eight hours of counselling at a reduced rate</li>
+                        <li>Designed for sustained, transformational work</li>
+                    </ul>
+                    <a href="checkout-bundle.html" class="btn btn-primary">Purchase Now</a>
+                </div>
+
+                <div class="pricing-card">
+                    <h3>Couples Intensive</h3>
+                    <div class="price">$849</div>
+                    <p class="price-period">deep-dive couples work</p>
+                    <ul class="pricing-features">
+                        <li>1 x 60-minute intake session for each partner</li>
+                        <li>2 x 90-minute joint intensive sessions</li>
+                    </ul>
+                    <a href="checkout-couples.html" class="btn btn-primary">Purchase Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Cronje Karuna Van Drake</h3>
+                    <p>Counselling Services</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Email: ckvandrake@gmail.com</p>
+                    <p>Phone: +27 82 430 6828</p>
+                    <p>Location: Johannesburg central</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="index.html#services">1:1 Counselling</a></li>
+                        <li><a href="index.html#services">Couples Sessions</a></li>
+                        <li><a href="index.html#services">The Reset Room</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Cronje Karuna Van Drake. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="supabaseConfig.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabaseClient.js"></script>
+    <script src="pricing.js"></script>
+</body>
+</html>
