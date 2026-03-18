@@ -10,8 +10,23 @@ export default async function handler(req, res) {
 
   try {
     const rawBody = req.body;
-    const body = typeof rawBody === "string" ? JSON.parse(rawBody) : rawBody;
+    let body = rawBody;
+    if (typeof rawBody === "string") {
+      try {
+        body = JSON.parse(rawBody);
+      } catch (e) {
+        // Cal.com "ping/test" can send non-JSON text; acknowledge so the webhook validates.
+        console.log("ℹ️ Non-JSON body received (likely ping/test).");
+        return res.status(200).json({ success: true, message: "pong" });
+      }
+    }
     console.log("📦 Raw payload:", JSON.stringify(body, null, 2));
+
+    // If Cal.com sends a ping/test structure, treat it as success.
+    const triggerEvent = body?.triggerEvent || body?.trigger_event || body?.type || null;
+    if (triggerEvent && String(triggerEvent).toLowerCase().includes("ping")) {
+      return res.status(200).json({ success: true, message: "pong" });
+    }
 
     // Cal.com can send nested payloads like { triggerEvent, payload: { ...booking } }
     const booking =
@@ -59,8 +74,12 @@ export default async function handler(req, res) {
 
     if (!email || !startTime) {
       console.log("❌ Missing required fields");
-      return res.status(400).json({
-        error: "Missing required fields",
+      // Cal.com sometimes validates webhooks with test events that don't include booking fields.
+      // Return 200 so the webhook can be enabled; we only write to Supabase when a booking exists.
+      return res.status(200).json({
+        success: true,
+        ignored: true,
+        reason: "missing booking fields",
         email,
         startTime,
       });
