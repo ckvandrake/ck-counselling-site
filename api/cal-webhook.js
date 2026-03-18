@@ -108,6 +108,12 @@ export default async function handler(req, res) {
 
     if (!userId) {
       console.log("⚠️ No matching profile found for email:", normalizedEmail);
+      return res.status(200).json({
+        success: true,
+        ignored: true,
+        reason: "no matching profile for attendee email",
+        email: normalizedEmail,
+      });
     }
 
     // 💾 Insert into sessions table
@@ -116,7 +122,6 @@ export default async function handler(req, res) {
       .insert([
         {
           user_id: userId,
-          user_email: normalizedEmail,
           session_date: startTime,
           duration_minutes: Number(duration) || 60,
           status: "upcoming",
@@ -125,8 +130,11 @@ export default async function handler(req, res) {
       .select();
 
     if (error) {
-      console.log("❌ Supabase insert error:", error);
-      return res.status(500).json({ error });
+      console.log("❌ Supabase insert error:", JSON.stringify(error, null, 2));
+      return res.status(500).json({
+        error: "Supabase insert failed",
+        details: error,
+      });
     }
 
     console.log("✅ Insert success:", data);
