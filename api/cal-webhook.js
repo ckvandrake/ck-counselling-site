@@ -9,34 +9,53 @@ export default async function handler(req, res) {
   }
 
   try {
-    const body = req.body;
+    const rawBody = req.body;
+    const body = typeof rawBody === "string" ? JSON.parse(rawBody) : rawBody;
     console.log("📦 Raw payload:", JSON.stringify(body, null, 2));
 
-    // 🔍 Extract payload safely (Cal.com sometimes nests it)
-    const payload = body.payload || body;
+    // Cal.com can send nested payloads like { triggerEvent, payload: { ...booking } }
+    const booking =
+      body?.payload?.booking ||
+      body?.payload?.payload ||
+      body?.payload ||
+      body?.booking ||
+      body;
 
-// Cal.com actual structure
-const booking = payload.booking || payload;
+    const email =
+      booking?.attendees?.[0]?.email ||
+      booking?.attendees?.[0]?.attendee?.email ||
+      booking?.user?.email ||
+      booking?.email ||
+      null;
 
-const email =
-  booking?.attendees?.[0]?.email ||
-  booking?.user?.email ||
-  null;
+    const startTime =
+      booking?.startTime ||
+      booking?.start_time ||
+      booking?.start ||
+      null;
 
-const startTime =
-  booking?.startTime ||
-  booking?.start_time ||
-  null;
+    const duration =
+      booking?.eventType?.lengthInMinutes ||
+      booking?.eventType?.length ||
+      booking?.lengthInMinutes ||
+      booking?.length ||
+      60;
 
-const duration =
-  booking?.eventType?.length ||
-  booking?.length ||
-  60;
+    // Useful for debugging/idempotency (if you add a column later)
+    const externalId =
+      booking?.uid ||
+      booking?.id ||
+      booking?.bookingUid ||
+      booking?.bookingId ||
+      null;
 
-console.log("🧠 Parsed values:");
-console.log("Email:", email);
-console.log("Start Time:", startTime);
-console.log("Duration:", duration);
+    console.log("🧠 Parsed values:", {
+      email,
+      startTime,
+      duration,
+      externalId,
+      keys: booking ? Object.keys(booking) : [],
+    });
 
     if (!email || !startTime) {
       console.log("❌ Missing required fields");
@@ -53,14 +72,34 @@ console.log("Duration:", duration);
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
+    // Map attendee email -> profile id so the portal (which queries by user_id) can display it.
+    const normalizedEmail = String(email).trim().toLowerCase();
+    let userId = null;
+    const profileResult = await supabase
+      .from("profiles")
+      .select("id,email")
+      .ilike("email", normalizedEmail)
+      .maybeSingle();
+
+    if (profileResult.error) {
+      console.log("❌ Supabase profile lookup error:", profileResult.error);
+    } else if (profileResult.data && profileResult.data.id) {
+      userId = profileResult.data.id;
+    }
+
+    if (!userId) {
+      console.log("⚠️ No matching profile found for email:", normalizedEmail);
+    }
+
     // 💾 Insert into sessions table
     const { data, error } = await supabase
       .from("sessions")
       .insert([
         {
-          user_email: email,
+          user_id: userId,
+          user_email: normalizedEmail,
           session_date: startTime,
-          duration_minutes: duration,
+          duration_minutes: Number(duration) || 60,
           status: "upcoming",
         },
       ])
@@ -76,6 +115,7 @@ console.log("Duration:", duration);
     return res.status(200).json({
       success: true,
       data,
+      userId,
     });
 
   } catch (err) {
