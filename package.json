@@ -1,9 +1,8 @@
 {
-  "name": "cronje-karuna-website",
-  "version": "1.0.0",
-  "description": "Cronje Karuna counselling website",
+  "name": "ck-counselling-site",
   "private": true,
+  "type": "module",
   "dependencies": {
-    "@supabase/supabase-js": "^2.47.0"
+    "@supabase/supabase-js": "^2.39.0"
   }
 }
