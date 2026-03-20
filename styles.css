@@ -1282,6 +1282,17 @@ textarea:focus {
   gap: 40px;
 }
 
+@keyframes qualityCardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .quality-card {
   background: rgba(255,255,255,0.04);
   padding: 32px;
@@ -1341,6 +1352,41 @@ textarea:focus {
     color: #C46A2E;
     opacity: 0.35;
   }
+
+@media (max-width: 768px) {
+  .about-qualities {
+    padding: 50px 0;
+  }
+
+  .about-qualities h2 {
+    margin-bottom: 30px;
+  }
+
+  .qualities-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* Stack in order (1-4) and add a subtle compressed slide-in */
+  .quality-card {
+    padding: 24px 20px;
+    animation: qualityCardSlideIn 0.45s ease forwards;
+    opacity: 0;
+  }
+
+  .quality-card:nth-child(1) {
+    animation-delay: 0ms;
+  }
+  .quality-card:nth-child(2) {
+    animation-delay: 60ms;
+  }
+  .quality-card:nth-child(3) {
+    animation-delay: 120ms;
+  }
+  .quality-card:nth-child(4) {
+    animation-delay: 180ms;
+  }
+}
 
 /* Checkout pages */
 .checkout {
