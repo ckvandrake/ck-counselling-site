@@ -8,17 +8,30 @@ window.supabaseClient = supabase.createClient(
 
 console.log("Supabase connected");
 
-async function checkAuthStatus() {
-  const { data: { user } } = await window.supabaseClient.auth.getUser();
+function syncSessionToLocalStorage(session) {
+  const user = session && session.user ? session.user : null;
 
   if (user) {
-    console.log("Logged in user:", user.email);
+    localStorage.setItem("user", JSON.stringify(user));
   } else {
-    console.log("No user logged in");
+    localStorage.removeItem("user");
+  }
+
+  // Existing pages listen for this to update the navbar.
+  window.dispatchEvent(new Event("supabase-session-synced"));
+}
+
+async function syncSessionOnLoad() {
+  try {
+    const { data } = await window.supabaseClient.auth.getSession();
+    syncSessionToLocalStorage(data && data.session ? data.session : null);
+  } catch (e) {
+    // If session fetch fails, clear localStorage so nav falls back correctly.
+    syncSessionToLocalStorage(null);
   }
 }
 
-checkAuthStatus();
+syncSessionOnLoad();
 async function updateBookingAccess() {
   const { data: { user } } = await window.supabaseClient.auth.getUser();
 
@@ -127,6 +140,7 @@ async function updateBookingAccess() {
 }
 
 window.supabaseClient.auth.onAuthStateChange((event, session) => {
+  syncSessionToLocalStorage(session);
   updateBookingAccess();
 });
 updateBookingAccess();
