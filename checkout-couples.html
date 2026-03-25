@@ -7,6 +7,11 @@
     <title>Complete Your Purchase - Couples Intensive</title>
     
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&display=swap" rel="stylesheet">
@@ -17,8 +22,12 @@
         <div class="container">
             <div class="nav-wrapper">
                 <div class="logo">
-                    <a href="index.html" style="text-decoration: none; color: inherit;">
-                        <h1>Cronje Karuna</h1>
+                    <a href="index.html" class="logo-link">
+                        <div class="logo-text">
+                            <span class="brand">Karuna</span>
+                            <img src="CK Van Drizzle Logo .png" class="logo-divider" alt="" />
+                            <span class="descriptor">Counselling</span>
+                        </div>
                     </a>
                 </div>
                 <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
@@ -27,7 +36,6 @@
                     <span></span>
                 </button>
                 <ul class="nav-menu" id="navMenu">
-                    <li><a href="index.html#home" class="nav-link">Home</a></li>
                     <li><a href="index.html#services" class="nav-link">Services</a></li>
                     <li><a href="index.html#booking" class="nav-link">Book a Session</a></li>
                     <li><a href="get-in-touch.html" class="nav-link">Get in Touch</a></li>
@@ -59,19 +67,29 @@
           </ul>
         </div>
 
+        <div class="payment-section">
         <div class="payment-options">
 
           <h3>Select Payment Method</h3>
           <p class="payment-trust">
             Secure payment • Instant access to booking calendar after purchase
           </p>
-          <a href="https://wise.com/pay/r/fililW72cz-wLdQ" class="payment-btn wise">
-            Pay with Wise
-          </a>
 
-          <a href="https://www.paypal.com/ncp/payment/P6E3KJL2S84B4" class="payment-btn paypal">
-            Pay with PayPal
-          </a>
+          <div class="payment-card preferred">
+            <div class="badge">Recommended</div>
+            <a href="https://wise.com/pay/r/fililW72cz-wLdQ" class="btn-wise" target="_blank" rel="noopener noreferrer">
+              <img src="icons/wise.svg" alt="Wise logo" class="btn-icon" />
+              <span>Pay with Wise</span>
+            </a>
+            <p class="hint">Lower fees · Instant confirmation</p>
+          </div>
+
+          <div class="payment-card">
+            <a href="https://www.paypal.com/ncp/payment/P6E3KJL2S84B4" class="btn-paypal" target="_blank" rel="noopener noreferrer">
+              <img src="icons/paypal.svg" alt="PayPal logo" class="btn-icon" />
+              <span>Pay with PayPal</span>
+            </a>
+          </div>
 
           <div class="bank-transfer">
             <h4>Pay via Bank Transfer</h4>
@@ -97,6 +115,7 @@
             </p>
           </div>
 
+        </div>
         </div>
 
       </div>
