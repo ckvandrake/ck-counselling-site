@@ -20,9 +20,15 @@
     <title>Cronje Karuna Van Drake - Counselling Services | Pause. Reflect. Restore. Resume.</title>
     
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
     
     <!-- Structured Data for SEO -->
     <script type="application/ld+json">
@@ -106,8 +112,12 @@
         <div class="container">
             <div class="nav-wrapper">
                 <div class="logo">
-                    <a href="#home" style="text-decoration: none; color: inherit;">
-                        <h1>Cronje Karuna</h1>
+                    <a href="#home" class="logo-link">
+                        <div class="logo-text">
+                            <span class="brand">Karuna</span>
+                            <img src="CK Van Drizzle Logo .png" class="logo-divider" alt="" />
+                            <span class="descriptor">Counselling</span>
+                        </div>
                     </a>
                 </div>
                 <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
@@ -116,7 +126,6 @@
                     <span></span>
                 </button>
                 <ul class="nav-menu" id="navMenu">
-                    <li><a href="#home" class="nav-link">Home</a></li>
                     <li><a href="#services" class="nav-link">Services</a></li>
                     <li><a href="#booking" class="nav-link">Book a Session</a></li>
                     <li><a href="get-in-touch.html" class="nav-link">Get in Touch</a></li>
@@ -129,35 +138,20 @@
         </div>
     </nav>
 
-    <!-- Home Section -->
-    <section id="home" class="about">
-        <div class="container">
-            <div class="about-content about-layout">
-                <div class="about-image">
-                    <img src="Website PP.jpg" alt="Cronje Karuna Van Drake" />
-                </div>
-                <div class="about-text">
-                    <h1 class="about-greeting">Being Human.</h1>
-                    <p class="about-intro">We are human, and more alike than different.</p>
-                    <p>We seek love and belonging.</p>
-                    <p>We need safety & security alongside freedom & exploration.</p>
-                    <p>We're always being pushed and pulled.</p>
-                    <p>Difficulty turns to ease and peace turns to friction.</p>
-                    <p>We all make mistakes, face bad luck, and hurt in some way...</p>
-                    <p>But healing is always an option.</p>
-                    <p>The path out of suffering toward liberation,</p> 
-                    <p> peace and flourishing beckons all.</p>
-                    <p class="about-last-line">I can help you to find your way.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Hero Section -->
-    <section id="hero" class="hero">
-        <div class="container">
+    <section id="home" class="hero">
+        <div class="hero-inner">
+            <div class="hero-image">
+                <img src="Cropped hero image.jpg" alt="Cronje Karuna Van Drake">
+            </div>
+
             <div class="hero-content">
-                <h1 class="hero-title">Pause. Reflect. Restore. Resume.</h1>
+                <h1>You have arrived<br>to a <em>safe</em> space.</h1>
+                <p> I invite you to slow down. And pause. <br> Breathe into the struggle and express it fully as you are held, witnessed and helped to find your way and live <em>anew.</em></p>
+                <div class="hero-buttons">
+                    <a href="#booking" class="btn-primary">Book a session</a>
+                    <a href="/about.html" class="btn-secondary">Learn more</a>
+                </div>
             </div>
         </div>
     </section>
@@ -202,7 +196,7 @@
             <div id="booking-locked" class="booking-locked-message">
                 <h3>You are not currently logged in.</h3>
                 <p>Please log in or sign up to book a session.</p>
-                <a href="#fees" class="btn btn-primary">View Session Options</a>
+                <a href="#login" class="btn btn-primary" id="bookingLoginBtn">Log In</a>
             </div>
             <div id="booking-unlocked" style="display:none;">
                 <div class="booking-container">
@@ -314,7 +308,6 @@
             </form>
         </div>
     </div>
-
 
     <!-- Success Message -->
     <div id="successMessage" class="success-message" style="display: none;">

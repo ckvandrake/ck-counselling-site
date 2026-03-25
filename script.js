@@ -590,6 +590,21 @@ window.addEventListener('DOMContentLoaded', function () {
     if (loginModal && (window.location.hash === '#login' || hasRedirect)) {
         openLoginModal();
     }
+
+    var bookingLoginBtn = document.getElementById('bookingLoginBtn');
+    if (bookingLoginBtn) {
+        bookingLoginBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            openLoginModal();
+        });
+    }
+});
+
+// e.g. in-page link to #login after load (Book Your Session uses JS; this covers hash-only navigation)
+window.addEventListener('hashchange', function () {
+    if (window.location.hash === '#login' && loginModal) {
+        openLoginModal();
+    }
 });
 
 // Format card number input
