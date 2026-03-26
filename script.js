@@ -34,20 +34,20 @@ async function checkBookingAccess() {
         unlockedEl.style.display = 'none';
         return;
     }
-    var result = await supabase.auth.getUser();
-    var user = result.data && result.data.user;
-    if (!user) {
-        lockedEl.style.display = '';
-        unlockedEl.style.display = 'none';
-        return;
-    }
-    var minutesResult = await supabase.from('profiles').select('credits_minutes').eq('id', user.id).maybeSingle();
-    var credits_minutes = (minutesResult.data && typeof minutesResult.data.credits_minutes === 'number') ? minutesResult.data.credits_minutes : 0;
-    console.log("User minutes remaining:", credits_minutes);
-    if (credits_minutes >= 30) {
-        lockedEl.style.display = 'none';
-        unlockedEl.style.display = '';
-    } else {
+    try {
+        // Booking access is auth-based only. Credit messaging is handled elsewhere.
+        var sessionResult = await supabase.auth.getSession();
+        var session = sessionResult.data && sessionResult.data.session;
+        var user = session && session.user;
+        if (user) {
+            lockedEl.style.display = 'none';
+            unlockedEl.style.display = '';
+        } else {
+            lockedEl.style.display = '';
+            unlockedEl.style.display = 'none';
+        }
+    } catch (e) {
+        console.error('Error checking booking access:', e);
         lockedEl.style.display = '';
         unlockedEl.style.display = 'none';
     }
