@@ -31,17 +31,31 @@ export default async function handler(req, res) {
     // Cal.com can send nested payloads like { triggerEvent, payload: { ...booking } }
     const booking =
       body?.payload?.booking ||
-      body?.payload?.payload ||
       body?.payload ||
-      body?.booking ||
       body;
 
-    const email =
-      booking?.attendees?.[0]?.email ||
-      booking?.attendees?.[0]?.attendee?.email ||
-      booking?.user?.email ||
+    const attendee = booking?.attendees?.[0] || {};
+    const nestedAttendee = attendee?.attendee || {};
+    const responseName = booking?.responses?.name?.value || null;
+    const responseEmail = booking?.responses?.email?.value || null;
+
+    const clientName =
+      attendee?.name ||
+      nestedAttendee?.name ||
+      responseName ||
+      null;
+    const clientEmail =
+      attendee?.email ||
+      nestedAttendee?.email ||
+      responseEmail ||
       booking?.email ||
       null;
+
+    console.log("👤 Attendee extracted:", attendee);
+    console.log("🧾 Response fallback:", {
+      responseName,
+      responseEmail,
+    });
 
     const startTime =
       booking?.startTime ||
@@ -65,14 +79,15 @@ export default async function handler(req, res) {
       null;
 
     console.log("🧠 Parsed values:", {
-      email,
+      clientEmail,
+      clientName,
       startTime,
       duration,
       externalId,
       keys: booking ? Object.keys(booking) : [],
     });
 
-    if (!email || !startTime) {
+    if (!clientEmail || !startTime) {
       console.log("❌ Missing required fields");
       // Cal.com sometimes validates webhooks with test events that don't include booking fields.
       // Return 200 so the webhook can be enabled; we only write to Supabase when a booking exists.
@@ -80,7 +95,8 @@ export default async function handler(req, res) {
         success: true,
         ignored: true,
         reason: "missing booking fields",
-        email,
+        clientEmail,
+        clientName,
         startTime,
       });
     }
@@ -92,7 +108,7 @@ export default async function handler(req, res) {
     );
 
     // Map attendee email -> profile id so the portal (which queries by user_id) can display it.
-    const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedEmail = String(clientEmail).trim().toLowerCase();
     let userId = null;
     const profileResult = await supabase
       .from("profiles")
@@ -117,6 +133,11 @@ export default async function handler(req, res) {
     }
 
     // 💾 Insert into sessions table
+    console.log("🕒 Inserting UTC time:", startTime);
+    console.log("🚀 INSERTING:", {
+      clientName,
+      clientEmail,
+    });
     const { data, error } = await supabase
       .from("sessions")
       .insert([
@@ -125,6 +146,8 @@ export default async function handler(req, res) {
           session_date: startTime,
           duration_minutes: Number(duration) || 60,
           status: "upcoming",
+          client_name: clientName,
+          client_email: clientEmail,
         },
       ])
       .select();
@@ -153,4 +176,3 @@ export default async function handler(req, res) {
     });
   }
 }
-

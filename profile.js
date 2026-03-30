@@ -108,15 +108,21 @@ async function loadUpcomingSessions(user) {
     try {
         var supabase = window.supabaseClient;
         if (!supabase) return;
+
+        var now = new Date().toISOString();
+
         var result = await supabase
             .from('sessions')
             .select('*')
             .eq('user_id', user.id)
-            .eq('status', 'upcoming')
-            .order('session_date');
+            .gte('session_date', now)
+            .neq('status', 'cancelled')
+            .order('session_date', { ascending: true });
+
         var container = document.getElementById('upcoming-sessions');
         if (!container) return;
         var sessions = result.data || [];
+
         if (!sessions || sessions.length === 0) {
             container.innerHTML =
                 '<p class="empty-state">You have no upcoming sessions scheduled.<br><br>' +
@@ -124,16 +130,30 @@ async function loadUpcomingSessions(user) {
                 '</p>';
             return;
         }
+
         container.innerHTML = sessions.map(function (session) {
-            var date = new Date(session.session_date);
-            var dateText = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-            var timeText = date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
-            var duration = session.duration_minutes ? (session.duration_minutes + ' minute session') : 'Session';
+            var formattedTime = (typeof window.formatUserLocalTime === 'function')
+                ? window.formatUserLocalTime(session.session_date)
+                : '';
+            var duration = session.duration_minutes
+                ? (session.duration_minutes + ' minute session')
+                : '60 minute session';
+
+            // Zoom link button — only show if link exists
+            var zoomHtml = '';
+            if (session.zoom_link) {
+                zoomHtml =
+                    '<a href="' + session.zoom_link + '" ' +
+                    'target="_blank" rel="noopener noreferrer" ' +
+                    'class="zoom-join-btn">' +
+                    '📹 Join Zoom Session</a>';
+            }
+
             return (
                 '<div class="session-card">' +
-                '<strong>' + dateText + '</strong><br>' +
-                timeText + '<br>' +
-                duration +
+                '<strong>' + formattedTime + '</strong><br>' +
+                duration + '<br>' +
+                zoomHtml +
                 '</div>'
             );
         }).join('');
@@ -177,9 +197,10 @@ async function loadLastSession(user) {
             return;
         }
 
-        var d = new Date(row.session_date);
-        var dateText = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-        el.innerText = 'Last session: ' + dateText;
+        var formattedTime = (typeof window.formatUserLocalTime === 'function')
+            ? window.formatUserLocalTime(row.session_date)
+            : '';
+        el.innerText = 'Last session: ' + formattedTime;
         el.style.display = 'block';
     } catch (e) {
         // Silent failure: this is an optional enhancement.
