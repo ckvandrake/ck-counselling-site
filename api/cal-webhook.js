@@ -34,6 +34,13 @@ export default async function handler(req, res) {
       body?.payload ||
       body;
 
+    const zoomLink =
+      booking?.videoCallData?.url ||
+      booking?.location ||
+      null;
+
+    console.log("🎥 Zoom link extracted:", zoomLink);
+
     const attendee = booking?.attendees?.[0] || {};
     const nestedAttendee = attendee?.attendee || {};
     const responseName = booking?.responses?.name?.value || null;
@@ -150,6 +157,11 @@ export default async function handler(req, res) {
       typeofClientName: typeof clientName,
       typeofClientEmail: typeof clientEmail,
     });
+    console.log("🚀 INSERTING FULL DATA:", {
+      clientName,
+      clientEmail,
+      zoomLink,
+    });
     const { data, error } = await supabase
       .from("sessions")
       .insert([
@@ -160,6 +172,7 @@ export default async function handler(req, res) {
           status: "upcoming",
           client_name: clientName,
           client_email: clientEmail,
+          zoom_link: zoomLink,
         },
       ])
       .select();
