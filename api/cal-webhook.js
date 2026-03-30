@@ -138,6 +138,13 @@ export default async function handler(req, res) {
       clientName,
       clientEmail,
     });
+    console.log("🔍 FINAL DEBUG:", {
+      attendee,
+      clientName,
+      clientEmail,
+      typeofClientName: typeof clientName,
+      typeofClientEmail: typeof clientEmail,
+    });
     const { data, error } = await supabase
       .from("sessions")
       .insert([
