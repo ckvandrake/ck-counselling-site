@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 export default async function handler(req, res) {
-  console.log("🔥 Webhook hit");
+  console.log("🔥 WEBHOOK VERSION: FINAL-FIX-123");
 
   if (req.method !== "POST") {
     console.log("❌ Invalid method:", req.method);
