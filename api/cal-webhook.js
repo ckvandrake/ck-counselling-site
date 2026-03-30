@@ -24,6 +24,9 @@ export default async function handler(req, res) {
 
     // If Cal.com sends a ping/test structure, treat it as success.
     const triggerEvent = body?.triggerEvent || body?.trigger_event || body?.type || null;
+    const eventType = String(triggerEvent || "").toUpperCase();
+    console.log("📡 EVENT TYPE:", eventType);
+
     if (triggerEvent && String(triggerEvent).toLowerCase().includes("ping")) {
       return res.status(200).json({ success: true, message: "pong" });
     }
@@ -82,13 +85,13 @@ export default async function handler(req, res) {
       booking?.length ||
       60;
 
-    // Useful for debugging/idempotency (if you add a column later)
     const externalId =
       booking?.uid ||
-      booking?.id ||
-      booking?.bookingUid ||
       booking?.bookingId ||
+      booking?.id ||
       null;
+
+    console.log("🆔 Booking UID:", externalId);
 
     console.log("🧠 Parsed values:", {
       clientEmail,
@@ -99,7 +102,10 @@ export default async function handler(req, res) {
       keys: booking ? Object.keys(booking) : [],
     });
 
-    if (!clientEmail || !startTime) {
+    const skipEmailStartForLifecycle =
+      eventType === "BOOKING_CANCELLED" || eventType === "BOOKING_RESCHEDULED";
+
+    if (!skipEmailStartForLifecycle && (!clientEmail || !startTime)) {
       console.log("❌ Missing required fields");
       // Cal.com sometimes validates webhooks with test events that don't include booking fields.
       // Return 200 so the webhook can be enabled; we only write to Supabase when a booking exists.
@@ -118,6 +124,58 @@ export default async function handler(req, res) {
       process.env.SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
+
+    if (eventType === "BOOKING_CANCELLED") {
+      console.log("❌ Handling cancellation for:", externalId);
+
+      const { data, error } = await supabase
+        .from("sessions")
+        .update({ status: "cancelled" })
+        .eq("cal_event_id", externalId)
+        .select();
+
+      if (error) {
+        console.log("❌ Cancel update error:", error);
+        return res.status(500).json({ error });
+      }
+
+      console.log("✅ Session cancelled:", data);
+
+      return res.status(200).json({
+        success: true,
+        action: "cancelled",
+      });
+    }
+
+    if (eventType === "BOOKING_RESCHEDULED") {
+      console.log("🔄 Handling reschedule for:", externalId);
+
+      const newStartTime =
+        booking?.startTime ||
+        booking?.start ||
+        null;
+
+      const { data, error } = await supabase
+        .from("sessions")
+        .update({
+          session_date: newStartTime,
+          status: "upcoming",
+        })
+        .eq("cal_event_id", externalId)
+        .select();
+
+      if (error) {
+        console.log("❌ Reschedule error:", error);
+        return res.status(500).json({ error });
+      }
+
+      console.log("✅ Session rescheduled:", data);
+
+      return res.status(200).json({
+        success: true,
+        action: "rescheduled",
+      });
+    }
 
     // Map attendee email -> profile id so the portal (which queries by user_id) can display it.
     const normalizedEmail = String(clientEmail).trim().toLowerCase();
@@ -173,6 +231,7 @@ export default async function handler(req, res) {
           client_name: clientName,
           client_email: clientEmail,
           zoom_link: zoomLink,
+          cal_event_id: externalId,
         },
       ])
       .select();
