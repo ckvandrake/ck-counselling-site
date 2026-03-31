@@ -207,18 +207,21 @@ export default async function handler(req, res) {
 
       const { data: insertData, error: insertError } = await supabase
         .from("sessions")
-        .insert([
-          {
-            user_id: userIdForReschedule,
-            session_date: newStartTime,
-            duration_minutes: Number(duration) || 60,
-            status: "upcoming",
-            client_name: clientName,
-            client_email: clientEmail,
-            zoom_link: zoomLink,
-            cal_event_id: newUid,
-          },
-        ])
+        .upsert(
+          [
+            {
+              user_id: userIdForReschedule,
+              session_date: newStartTime,
+              duration_minutes: Number(duration) || 60,
+              status: "upcoming",
+              client_name: clientName,
+              client_email: clientEmail,
+              zoom_link: zoomLink,
+              cal_event_id: newUid,
+            },
+          ],
+          { onConflict: "cal_event_id" }
+        )
         .select();
 
       if (insertError) {
@@ -279,18 +282,21 @@ export default async function handler(req, res) {
     });
     const { data, error } = await supabase
       .from("sessions")
-      .insert([
-        {
-          user_id: userId,
-          session_date: startTime,
-          duration_minutes: Number(duration) || 60,
-          status: "upcoming",
-          client_name: clientName,
-          client_email: clientEmail,
-          zoom_link: zoomLink,
-          cal_event_id: externalId,
-        },
-      ])
+      .upsert(
+        [
+          {
+            user_id: userId,
+            session_date: startTime,
+            duration_minutes: Number(duration) || 60,
+            status: "upcoming",
+            client_name: clientName,
+            client_email: clientEmail,
+            zoom_link: zoomLink,
+            cal_event_id: externalId,
+          },
+        ],
+        { onConflict: "cal_event_id" }
+      )
       .select();
 
     if (error) {
