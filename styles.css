@@ -2117,6 +2117,12 @@ textarea:focus {
   margin-top:8px;
 }
 
+.timezone-note {
+  font-size: 0.9rem;
+  color: #6b6b6b;
+  margin-bottom: 12px;
+}
+
 .resource-links{
   margin-top:16px;
   padding-left: 18px;

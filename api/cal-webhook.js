@@ -148,28 +148,85 @@ export default async function handler(req, res) {
     }
 
     if (eventType === "BOOKING_RESCHEDULED") {
-      console.log("🔄 Handling reschedule for:", externalId);
+      console.log("🔄 Reschedule detected");
+
+      const oldUid = body?.payload?.rescheduleUid || body?.rescheduleUid || null;
+      const newUid = booking?.uid || booking?.bookingId || booking?.id || null;
+
+      console.log("Old UID:", oldUid);
+      console.log("New UID:", newUid);
+
+      if (oldUid) {
+        const { data: cancelData, error: cancelError } = await supabase
+          .from("sessions")
+          .update({ status: "cancelled" })
+          .eq("cal_event_id", oldUid)
+          .select();
+
+        if (cancelError) {
+          console.log("❌ Cancel update error (reschedule path):", cancelError);
+          return res.status(500).json({ error: cancelError });
+        }
+
+        console.log("✅ Old session cancelled (reschedule):", cancelData);
+      } else {
+        console.log("⚠️ No oldUid (rescheduleUid) provided; skipping cancel step.");
+      }
+
+      // Look up user_id the same way as in the create path
+      const normalizedEmailForReschedule = String(clientEmail || "").trim().toLowerCase();
+      let userIdForReschedule = null;
+      if (normalizedEmailForReschedule) {
+        const profileResultReschedule = await supabase
+          .from("profiles")
+          .select("id,email")
+          .ilike("email", normalizedEmailForReschedule)
+          .maybeSingle();
+
+        if (profileResultReschedule.error) {
+          console.log("❌ Supabase profile lookup error (reschedule):", profileResultReschedule.error);
+        } else if (profileResultReschedule.data && profileResultReschedule.data.id) {
+          userIdForReschedule = profileResultReschedule.data.id;
+        }
+      }
+
+      if (!userIdForReschedule) {
+        console.log("⚠️ No matching profile found for rescheduled email:", clientEmail);
+        return res.status(200).json({
+          success: true,
+          ignored: true,
+          reason: "no matching profile for rescheduled attendee email",
+          email: clientEmail,
+        });
+      }
 
       const newStartTime =
         booking?.startTime ||
         booking?.start ||
         null;
 
-      const { data, error } = await supabase
+      const { data: insertData, error: insertError } = await supabase
         .from("sessions")
-        .update({
-          session_date: newStartTime,
-          status: "upcoming",
-        })
-        .eq("cal_event_id", externalId)
+        .insert([
+          {
+            user_id: userIdForReschedule,
+            session_date: newStartTime,
+            duration_minutes: Number(duration) || 60,
+            status: "upcoming",
+            client_name: clientName,
+            client_email: clientEmail,
+            zoom_link: zoomLink,
+            cal_event_id: newUid,
+          },
+        ])
         .select();
 
-      if (error) {
-        console.log("❌ Reschedule error:", error);
-        return res.status(500).json({ error });
+      if (insertError) {
+        console.log("❌ Reschedule insert error:", insertError);
+        return res.status(500).json({ error: insertError });
       }
 
-      console.log("✅ Session rescheduled:", data);
+      console.log("✅ Session rescheduled (new row inserted):", insertData);
 
       return res.status(200).json({
         success: true,

@@ -11,3 +11,12 @@ export function formatUserLocalTime(dateString) {
   });
 }
 
+export function getUserTimeZoneLabel() {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return tz || "local time";
+  } catch {
+    return "local time";
+  }
+}
+

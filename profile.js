@@ -104,26 +104,62 @@ async function loadCredits(user) {
     }
 }
 
+function splitSessionsByStatusAndTime(sessions) {
+    var now = new Date();
+
+    var buckets = {
+        upcoming: [],
+        completed: [],
+        cancelled: []
+    };
+
+    (sessions || []).forEach(function (session) {
+        if (!session || !session.session_date) return;
+
+        if (session.status === 'cancelled') {
+            buckets.cancelled.push(session);
+            return;
+        }
+
+        var when = new Date(session.session_date);
+        if (isNaN(when.getTime())) return;
+
+        if (when.getTime() >= now.getTime()) {
+            buckets.upcoming.push(session);
+        } else {
+            buckets.completed.push(session);
+        }
+    });
+
+    buckets.upcoming.sort(function (a, b) {
+        return new Date(a.session_date) - new Date(b.session_date);
+    });
+
+    buckets.completed.sort(function (a, b) {
+        return new Date(b.session_date) - new Date(a.session_date);
+    });
+
+    return buckets;
+}
+
 async function loadUpcomingSessions(user) {
     try {
         var supabase = window.supabaseClient;
         if (!supabase) return;
 
-        var now = new Date().toISOString();
-
         var result = await supabase
             .from('sessions')
             .select('*')
             .eq('user_id', user.id)
-            .gte('session_date', now)
-            .neq('status', 'cancelled')
             .order('session_date', { ascending: true });
 
         var container = document.getElementById('upcoming-sessions');
         if (!container) return;
         var sessions = result.data || [];
+        var buckets = splitSessionsByStatusAndTime(sessions);
 
-        if (!sessions || sessions.length === 0) {
+        if ((!buckets.upcoming || buckets.upcoming.length === 0) &&
+            (!buckets.completed || buckets.completed.length === 0)) {
             container.innerHTML =
                 '<p class="empty-state">You have no upcoming sessions scheduled.<br><br>' +
                 "When you're ready, book your next session using the button above." +
@@ -131,32 +167,70 @@ async function loadUpcomingSessions(user) {
             return;
         }
 
-        container.innerHTML = sessions.map(function (session) {
-            var formattedTime = (typeof window.formatUserLocalTime === 'function')
-                ? window.formatUserLocalTime(session.session_date)
-                : '';
-            var duration = session.duration_minutes
-                ? (session.duration_minutes + ' minute session')
-                : '60 minute session';
+        var htmlParts = [];
 
-            // Zoom link button — only show if link exists
-            var zoomHtml = '';
-            if (session.zoom_link) {
-                zoomHtml =
-                    '<a href="' + session.zoom_link + '" ' +
-                    'target="_blank" rel="noopener noreferrer" ' +
-                    'class="zoom-join-btn">' +
-                    '📹 Join Zoom Session</a>';
-            }
-
-            return (
-                '<div class="session-card">' +
-                '<strong>' + formattedTime + '</strong><br>' +
-                duration + '<br>' +
-                zoomHtml +
-                '</div>'
+        if (typeof window.getUserTimeZoneLabel === 'function') {
+            var tzLabel = window.getUserTimeZoneLabel();
+            htmlParts.push(
+                '<p class="timezone-note">All times shown in <strong>' +
+                tzLabel +
+                '</strong>.</p>'
             );
-        }).join('');
+        }
+
+        if (buckets.upcoming && buckets.upcoming.length > 0) {
+            htmlParts.push('<div class="dashboard-section"><h2>Upcoming sessions</h2>');
+            htmlParts.push(buckets.upcoming.map(function (session) {
+                var formattedTime = (typeof window.formatUserLocalTime === 'function')
+                    ? window.formatUserLocalTime(session.session_date)
+                    : '';
+                var duration = session.duration_minutes
+                    ? (session.duration_minutes + ' minute session')
+                    : '60 minute session';
+
+                var zoomHtml = '';
+                if (session.zoom_link) {
+                    zoomHtml =
+                        '<a href="' + session.zoom_link + '" ' +
+                        'target="_blank" rel="noopener noreferrer" ' +
+                        'class="zoom-join-btn">' +
+                        '📹 Join Zoom Session</a>';
+                }
+
+                return (
+                    '<div class="session-card">' +
+                    '<strong>' + formattedTime + '</strong><br>' +
+                    duration + '<br>' +
+                    zoomHtml +
+                    '</div>'
+                );
+            }).join(''));
+            htmlParts.push('</div>');
+        }
+
+        if (buckets.completed && buckets.completed.length > 0) {
+            htmlParts.push('<div class="dashboard-section"><h2>Completed sessions</h2>');
+            htmlParts.push(buckets.completed.map(function (session) {
+                var formattedTime = (typeof window.formatUserLocalTime === 'function')
+                    ? window.formatUserLocalTime(session.session_date)
+                    : '';
+                var duration = session.duration_minutes
+                    ? (session.duration_minutes + ' minute session')
+                    : '60 minute session';
+
+                return (
+                    '<div class="session-card">' +
+                    '<strong>' + formattedTime + '</strong><br>' +
+                    duration +
+                    '</div>'
+                );
+            }).join(''));
+            htmlParts.push('</div>');
+        }
+
+        // Cancelled sessions are intentionally not rendered; we keep them in buckets.cancelled for potential future UI.
+
+        container.innerHTML = htmlParts.join('');
     } catch (e) {
         console.error('Error loading upcoming sessions:', e);
     }
