@@ -41,7 +41,7 @@
     if (!container) return;
 
     if (!title || !price) {
-        container.innerHTML = "<p class=\"payment-fallback\">Please choose a plan from the <a href=\"work-with-me.html\">Fees</a> page.</p>";
+        container.innerHTML = "<p class=\"payment-fallback\">Please choose a plan from the <a href=\"work-with-me.html\">Working Together</a> page.</p>";
         return;
     }
 

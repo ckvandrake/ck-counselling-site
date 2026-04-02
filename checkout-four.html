@@ -38,8 +38,8 @@
                 <ul class="nav-menu" id="navMenu">
                     <li><a href="index.html#services" class="nav-link">Services</a></li>
                     <li><a href="index.html#booking" class="nav-link">Book a Session</a></li>
-                    <li><a href="get-in-touch.html" class="nav-link">Get in Touch</a></li>
-                    <li><a href="work-with-me.html" class="nav-link">Fees</a></li>
+                    <!-- Get in Touch temporarily removed -->
+                    <li><a href="work-with-me.html" class="nav-link">Working Together</a></li>
                     <li><a href="about.html" class="nav-link">About</a></li>
                     <li><a href="index.html#login" class="nav-link" id="loginLink">Login</a></li>
                 </ul>
@@ -149,6 +149,18 @@
             </div>
         </div>
     </footer>
+
+    <div id="logout-modal" class="logout-modal hidden">
+      <div class="modal-overlay"></div>
+      <div class="modal-card">
+        <h2 class="modal-title">Log out?</h2>
+        <p class="modal-subtext">You’ll need to log in again to access your account.</p>
+        <div class="modal-actions">
+          <button id="confirm-logout" class="primary-btn">Confirm</button>
+          <button id="cancel-logout" class="secondary-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
 
     <script src="supabaseConfig.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

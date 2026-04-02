@@ -1113,6 +1113,19 @@ section {
     text-decoration: underline;
 }
 
+.auth-link {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.9rem;
+    color: #2A9D8F;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.auth-link:hover {
+    opacity: 0.7;
+    text-decoration: underline;
+}
+
 /* Client Profile */
 .client-profile {
     min-height: 70vh;
@@ -2121,6 +2134,183 @@ textarea:focus {
   font-size: 0.9rem;
   color: #6b6b6b;
   margin-bottom: 12px;
+}
+
+.logout-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.logout-modal:not(.hidden) {
+  visibility: visible;
+  transition: visibility 0s;
+}
+
+.logout-modal.hidden {
+  pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s linear 0.25s;
+}
+
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.logout-modal:not(.hidden) .modal-overlay {
+  opacity: 1;
+}
+
+.logout-modal.hidden .modal-overlay {
+  opacity: 0;
+}
+
+.modal-card {
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
+  padding: 32px 28px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 360px;
+  margin-inline: 16px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.logout-modal:not(.hidden) .modal-card {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.logout-modal.hidden .modal-card {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #2d1b12;
+}
+
+.modal-subtext {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.logout-modal .modal-card .primary-btn {
+  padding: 12px 22px;
+  border-radius: 999px;
+  background-color: #3b1406;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: 'Manrope', sans-serif;
+  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.logout-modal .modal-card .primary-btn:hover {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  opacity: 1;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(83, 159, 162, 0.28);
+}
+
+.logout-modal .modal-card .primary-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.logout-modal .modal-card .secondary-btn {
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid #3b1406;
+  background: transparent;
+  color: #3b1406;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: 'Manrope', sans-serif;
+  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.logout-modal .modal-card .secondary-btn:hover {
+  background: rgba(83, 159, 162, 0.12);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  box-shadow: none;
+  opacity: 1;
+}
+
+.logout-modal .modal-card .secondary-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logout-modal {
+    transition: none !important;
+  }
+
+  .logout-modal.hidden {
+    transition: visibility 0s !important;
+  }
+
+  .modal-overlay,
+  .modal-card {
+    transition: opacity 0.15s ease !important;
+  }
+
+  .logout-modal .modal-card {
+    transform: none !important;
+  }
+
+  .logout-modal:not(.hidden) .modal-card {
+    transform: none !important;
+  }
+
+  .logout-modal.hidden .modal-card {
+    transform: none !important;
+  }
+
+  .logout-modal .modal-card .primary-btn,
+  .logout-modal .modal-card .secondary-btn {
+    transition: background-color 0.15s ease, opacity 0.15s ease !important;
+  }
+
+  .logout-modal .modal-card .primary-btn:hover,
+  .logout-modal .modal-card .secondary-btn:hover,
+  .logout-modal .modal-card .primary-btn:active,
+  .logout-modal .modal-card .secondary-btn:active {
+    transform: none !important;
+  }
 }
 
 .resource-links{

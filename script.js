@@ -364,6 +364,70 @@ window.addEventListener('click', (e) => {
     }
 });
 
+// Forgot password view toggle (inside login modal)
+const forgotLink = document.getElementById('forgot-password-link');
+const backLink = document.getElementById('back-to-login');
+
+const loginView = document.getElementById('login-view');
+const forgotView = document.getElementById('forgot-password-view');
+
+const resetBtn = document.getElementById('send-reset-link-btn');
+const resetEmailInput = document.getElementById('reset-email');
+const resetMessage = document.getElementById('reset-message');
+
+if (forgotLink) {
+    forgotLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (loginView) loginView.style.display = 'none';
+        if (forgotView) forgotView.style.display = 'block';
+    });
+}
+
+if (backLink) {
+    backLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (forgotView) forgotView.style.display = 'none';
+        if (loginView) loginView.style.display = 'block';
+    });
+}
+
+if (resetBtn) {
+    resetBtn.addEventListener('click', async () => {
+        const email = (resetEmailInput && resetEmailInput.value ? resetEmailInput.value : '').trim();
+
+        if (!email) {
+            if (resetMessage) resetMessage.textContent = 'Please enter your email.';
+            return;
+        }
+
+        // loading state
+        resetBtn.disabled = true;
+        resetBtn.textContent = 'Sending...';
+        if (resetMessage) resetMessage.textContent = '';
+
+        try {
+            var supabase = window.supabaseClient;
+            if (!supabase) throw new Error('Supabase not configured');
+
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/update-password.html`
+            });
+
+            if (error) throw error;
+
+            // IMPORTANT: neutral success message (security)
+            if (resetMessage) resetMessage.textContent = 'If that email exists, a reset link has been sent.';
+        } catch (err) {
+            // Do NOT expose specific errors
+            if (resetMessage) resetMessage.textContent = 'Something went wrong. Please try again.';
+        }
+
+        // reset button state
+        resetBtn.disabled = false;
+        resetBtn.textContent = 'Send reset link';
+    });
+}
+
 // Login Form Handler (Supabase Auth)
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
@@ -477,6 +541,14 @@ async function goToProfile() {
 }
 
 async function logout() {
+    // Open logout confirmation modal if present; actual sign-out happens there.
+    var modal = document.getElementById('logout-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        return;
+    }
+
+    // Fallback: direct logout if modal is missing for some reason.
     try {
         var supabase = window.supabaseClient;
         if (supabase) {
@@ -596,6 +668,41 @@ window.addEventListener('DOMContentLoaded', function () {
         bookingLoginBtn.addEventListener('click', function (e) {
             e.preventDefault();
             openLoginModal();
+        });
+    }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("logout-modal");
+    const navLogout = document.getElementById("logoutNavLink");
+    const confirmBtn = document.getElementById("confirm-logout");
+    const cancelBtn = document.getElementById("cancel-logout");
+
+    if (!modal || !navLogout) return;
+
+    // Open modal
+    navLogout.addEventListener("click", (e) => {
+        e.preventDefault();
+        modal.classList.remove("hidden");
+    });
+
+    // Cancel logout
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+        });
+    }
+
+    // Confirm logout (ONLY place where logout happens)
+    if (confirmBtn) {
+        confirmBtn.addEventListener("click", async () => {
+            try {
+                await window.supabaseClient.auth.signOut();
+            } catch (err) {
+                console.error("Logout error:", err);
+            }
+
+            window.location.href = "/index.html";
         });
     }
 });

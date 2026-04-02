@@ -38,8 +38,8 @@
                 <ul class="nav-menu" id="navMenu">
                     <li><a href="index.html#services" class="nav-link">Services</a></li>
                     <li><a href="index.html#booking" class="nav-link">Book a Session</a></li>
-                    <li><a href="get-in-touch.html" class="nav-link">Get in Touch</a></li>
-                    <li><a href="work-with-me.html" class="nav-link">Fees</a></li>
+                    <!-- Get in Touch temporarily removed -->
+                    <li><a href="work-with-me.html" class="nav-link">Working Together</a></li>
                     <li><a href="about.html" class="nav-link">About</a></li>
                     <li><a href="index.html#login" class="nav-link" id="loginLink">Login</a></li>
                 </ul>
@@ -50,7 +50,7 @@
     <!-- Pricing Section -->
     <section class="pricing">
         <div class="container">
-            <h2 class="section-title">Fees</h2>
+            <h2 class="section-title">Working Together</h2>
             <div class="pricing-grid">
                 <div class="pricing-card">
                     <h3>Single Session</h3>
@@ -99,12 +99,12 @@
                         <li>Corporate wellness solution</li>
                         <li>Pricing tailored to suit your needs</li>
                     </ul>
-                    <a href="get-in-touch.html" class="btn btn-primary">Inquire Now</a>
+                    <a href="#" class="btn btn-primary">Inquire Now</a>
                 </div>
                 <div class="pricing-card">
                     <h3>Donation Based Counselling</h3>
                     <p class="pricing-description">For those in need who lack resources.</p>
-                    <a href="get-in-touch.html" class="btn btn-primary">Apply Now</a>
+                    <a href="#" class="btn btn-primary">Apply Now</a>
                 </div>
             </div>
         </div>
@@ -138,6 +138,18 @@
             </div>
         </div>
     </footer>
+
+    <div id="logout-modal" class="logout-modal hidden">
+      <div class="modal-overlay"></div>
+      <div class="modal-card">
+        <h2 class="modal-title">Log out?</h2>
+        <p class="modal-subtext">You’ll need to log in again to access your account.</p>
+        <div class="modal-actions">
+          <button id="confirm-logout" class="primary-btn">Confirm</button>
+          <button id="cancel-logout" class="secondary-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
 
     <script src="supabaseConfig.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
