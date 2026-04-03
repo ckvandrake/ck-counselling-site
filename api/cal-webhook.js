@@ -237,6 +237,42 @@ export default async function handler(req, res) {
       });
     }
 
+    if (eventType === "MEETING_ENDED") {
+      console.log("✅ Handling meeting ended for:", externalId);
+
+      const { data, error } = await supabase
+        .from("sessions")
+        .update({ status: "completed" })
+        .eq("cal_event_id", externalId)
+        .select();
+
+      if (error) {
+        console.log("❌ Meeting ended update error:", error);
+        return res.status(500).json({ error });
+      }
+
+      console.log("✅ Session marked completed:", data);
+
+      return res.status(200).json({
+        success: true,
+        action: "completed",
+      });
+    }
+
+    if (eventType === "MEETING_STARTED") {
+      console.log("🟡 Handling meeting started for:", externalId);
+
+      await supabase
+        .from("sessions")
+        .update({ status: "in_progress" })
+        .eq("cal_event_id", externalId);
+
+      return res.status(200).json({
+        success: true,
+        action: "in_progress",
+      });
+    }
+
     // Map attendee email -> profile id so the portal (which queries by user_id) can display it.
     const normalizedEmail = String(clientEmail).trim().toLowerCase();
     let userId = null;

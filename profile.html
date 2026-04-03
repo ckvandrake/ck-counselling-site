@@ -41,7 +41,8 @@
                     <!-- Get in Touch temporarily removed -->
                     <li><a href="work-with-me.html" class="nav-link">Working Together</a></li>
                     <li><a href="about.html" class="nav-link">About</a></li>
-                    <li><a href="#" class="nav-link" id="logoutLink">Logout</a></li>
+                    <li><a href="index.html#login" class="nav-link" id="loginLink">Login</a></li>
+                    <li><a href="#" class="nav-link" id="logoutNavLink" style="display:none;">Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -77,7 +78,10 @@
                     </div>
 
                     <p id="credit-explanation"></p>
-                    <div id="last-session" class="last-session" style="display:none;"></div>
+                    <div id="last-session" class="last-session" style="display:none;">
+                        <p class="last-session-label">Last session</p>
+                        <p id="last-session-details" class="last-session-details"></p>
+                    </div>
 
                     <a id="credit-cta" href="work-with-me.html" class="primary-btn">
                         View Session Options
@@ -156,6 +160,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabaseClient.js"></script>
     <script src="lib/time.js"></script>
+    <script src="script.js"></script>
     <script src="profile.js"></script>
 </body>
 </html>

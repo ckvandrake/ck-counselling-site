@@ -1049,7 +1049,7 @@ section {
 .modal-content {
     background-color: var(--white);
     margin: 5% auto;
-    padding: 2.5rem;
+    padding: 24px;
     border-radius: 25px;
     width: 90%;
     max-width: 500px;
@@ -1063,7 +1063,7 @@ section {
 @media (max-height: 700px) {
     .modal-content {
         margin: 0 auto;
-        padding: 2rem;
+        padding: 20px;
         border-radius: 22px;
     }
 }
@@ -1098,6 +1098,55 @@ section {
     margin-top: 1.5rem;
 }
 
+/* Login / signup modals: tighter vertical rhythm (scoped — other forms unchanged) */
+.modal .form-group {
+    margin-bottom: 14px;
+}
+
+.modal .form-group input,
+.modal .form-group select,
+.modal .form-group textarea {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+}
+
+.modal .password-field {
+    position: relative;
+}
+
+.modal .password-field input {
+    padding-right: 64px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modal .toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #2f7f73;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.modal .toggle-password:hover {
+    opacity: 0.85;
+}
+
+.modal .login-form .btn-primary.btn-full,
+.modal .login-form button.btn-primary.btn-full {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+}
+
 .signup-link {
     text-align: center;
     margin-top: 1rem;
@@ -1124,6 +1173,17 @@ section {
 .auth-link:hover {
     opacity: 0.7;
     text-decoration: underline;
+}
+
+.login-error {
+    color: #b00020;
+    font-size: 0.85rem;
+    margin-top: 6px;
+}
+
+.modal .form-group input.error,
+.modal .password-field input.error {
+    border-color: #b00020;
 }
 
 /* Client Profile */
@@ -1369,7 +1429,7 @@ section {
     .modal-content {
         width: 95%;
         margin: 10% auto;
-        padding: 1.5rem;
+        padding: 20px;
     }
 
     .footer-content {
@@ -2124,10 +2184,20 @@ textarea:focus {
   text-align:center;
 }
 
-.last-session{
-  font-size:.85rem;
-  color:#7a7a7a;
-  margin-top:8px;
+.last-session {
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+
+.last-session-label {
+  font-size: 0.85rem;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+.last-session-details {
+  font-size: 0.95rem;
+  color: #2d1b12;
 }
 
 .timezone-note {

@@ -322,10 +322,21 @@ const logoutNavLink = document.getElementById('logoutNavLink');
 const showSignup = document.getElementById('showSignup');
 const showLogin = document.getElementById('showLogin');
 
+function clearLoginError() {
+    var errEl = document.getElementById('loginError');
+    if (errEl) errEl.style.display = 'none';
+    var emailInput = document.getElementById('loginEmail');
+    var passwordInput = document.getElementById('loginPassword');
+    if (emailInput) emailInput.classList.remove('error');
+    if (passwordInput) passwordInput.classList.remove('error');
+}
+
 function openLoginModal() {
+    clearLoginError();
     if (loginModal) loginModal.style.display = 'block';
 }
 function closeLoginModal() {
+    clearLoginError();
     if (loginModal) loginModal.style.display = 'none';
 }
 window.openLoginModal = openLoginModal;
@@ -342,14 +353,17 @@ if (showLogin) {
     showLogin.addEventListener('click', (e) => {
         e.preventDefault();
         if (signupModal) signupModal.style.display = 'none';
-        if (loginModal) loginModal.style.display = 'block';
+        openLoginModal();
     });
 }
 
 // Close modals
 document.querySelectorAll('.close-modal').forEach(closeBtn => {
     closeBtn.addEventListener('click', () => {
-        if (loginModal) loginModal.style.display = 'none';
+        if (loginModal) {
+            clearLoginError();
+            loginModal.style.display = 'none';
+        }
         if (signupModal) signupModal.style.display = 'none';
     });
 });
@@ -357,6 +371,7 @@ document.querySelectorAll('.close-modal').forEach(closeBtn => {
 // Close modals when clicking outside
 window.addEventListener('click', (e) => {
     if (e.target === loginModal) {
+        clearLoginError();
         loginModal.style.display = 'none';
     }
     if (e.target === signupModal) {
@@ -378,6 +393,7 @@ const resetMessage = document.getElementById('reset-message');
 if (forgotLink) {
     forgotLink.addEventListener('click', (e) => {
         e.preventDefault();
+        clearLoginError();
         if (loginView) loginView.style.display = 'none';
         if (forgotView) forgotView.style.display = 'block';
     });
@@ -386,6 +402,7 @@ if (forgotLink) {
 if (backLink) {
     backLink.addEventListener('click', (e) => {
         e.preventDefault();
+        clearLoginError();
         if (forgotView) forgotView.style.display = 'none';
         if (loginView) loginView.style.display = 'block';
     });
@@ -435,6 +452,7 @@ if (loginForm) {
         e.preventDefault();
         var emailInput = document.getElementById('loginEmail');
         var passwordInput = document.getElementById('loginPassword');
+        clearLoginError();
         var supabase = window.supabaseClient;
         if (!supabase) return;
         var result = await supabase.auth.signInWithPassword({
@@ -444,12 +462,39 @@ if (loginForm) {
         var data = result.data;
         var error = result.error;
         if (error) {
-            console.error(error);
+            var loginErrorEl = document.getElementById('loginError');
+            if (loginErrorEl) loginErrorEl.style.display = 'block';
+            if (emailInput) emailInput.classList.add('error');
+            if (passwordInput) passwordInput.classList.add('error');
             return;
         }
         console.log("User signed in:", data.user);
         closeLoginModal();
     });
+
+    var loginEmailField = document.getElementById('loginEmail');
+    var loginPasswordField = document.getElementById('loginPassword');
+    if (loginEmailField) {
+        loginEmailField.addEventListener('input', clearLoginError);
+    }
+    if (loginPasswordField) {
+        loginPasswordField.addEventListener('input', clearLoginError);
+    }
+
+    var loginPasswordToggle = document.querySelector('#loginForm .toggle-password');
+    if (loginPasswordToggle && loginPasswordField) {
+        loginPasswordToggle.addEventListener('click', function () {
+            if (loginPasswordField.type === 'password') {
+                loginPasswordField.type = 'text';
+                loginPasswordToggle.textContent = 'Hide';
+                loginPasswordToggle.setAttribute('aria-label', 'Hide password');
+            } else {
+                loginPasswordField.type = 'password';
+                loginPasswordToggle.textContent = 'Show';
+                loginPasswordToggle.setAttribute('aria-label', 'Show password');
+            }
+        });
+    }
 }
 
 // Signup Form Handler (Supabase Auth + insert into users table)
@@ -589,14 +634,10 @@ function updateNavFromAuth() {
             if (logoutNavLink) {
                 if (session) {
                     logoutNavLink.style.display = 'inline-block';
-                    logoutNavLink.onclick = function (e) {
-                        e.preventDefault();
-                        logout();
-                    };
                 } else {
                     logoutNavLink.style.display = 'none';
-                    logoutNavLink.onclick = null;
                 }
+                logoutNavLink.onclick = null;
             }
         }).catch(function () {
             if (loginLink) {
@@ -634,14 +675,10 @@ function updateNavFromAuth() {
         if (logoutNavLink) {
             if (userData) {
                 logoutNavLink.style.display = 'inline-block';
-                logoutNavLink.onclick = function (e) {
-                    e.preventDefault();
-                    logout();
-                };
             } else {
                 logoutNavLink.style.display = 'none';
-                logoutNavLink.onclick = null;
             }
+            logoutNavLink.onclick = null;
         }
     }
 }
@@ -649,7 +686,10 @@ function updateNavFromAuth() {
 window.addEventListener('DOMContentLoaded', function () {
     updateNavFromAuth();
     checkBookingAccess();
-    window.addEventListener('supabase-session-synced', checkBookingAccess);
+    window.addEventListener('supabase-session-synced', function () {
+        updateNavFromAuth();
+        checkBookingAccess();
+    });
 
     var params = new URLSearchParams(window.location.search);
     var redirect = params.get('redirect');
@@ -680,7 +720,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!modal || !navLogout) return;
 
-    // Open modal
+    navLogout.onclick = null;
+
+    // Open modal (only path from navbar Logout → confirmation)
     navLogout.addEventListener("click", (e) => {
         e.preventDefault();
         modal.classList.remove("hidden");

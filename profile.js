@@ -109,7 +109,6 @@ function splitSessionsByStatusAndTime(sessions) {
 
     var buckets = {
         upcoming: [],
-        completed: [],
         cancelled: []
     };
 
@@ -126,17 +125,11 @@ function splitSessionsByStatusAndTime(sessions) {
 
         if (when.getTime() >= now.getTime()) {
             buckets.upcoming.push(session);
-        } else {
-            buckets.completed.push(session);
         }
     });
 
     buckets.upcoming.sort(function (a, b) {
         return new Date(a.session_date) - new Date(b.session_date);
-    });
-
-    buckets.completed.sort(function (a, b) {
-        return new Date(b.session_date) - new Date(a.session_date);
     });
 
     return buckets;
@@ -158,8 +151,7 @@ async function loadUpcomingSessions(user) {
         var sessions = result.data || [];
         var buckets = splitSessionsByStatusAndTime(sessions);
 
-        if ((!buckets.upcoming || buckets.upcoming.length === 0) &&
-            (!buckets.completed || buckets.completed.length === 0)) {
+        if (!buckets.upcoming || buckets.upcoming.length === 0) {
             container.innerHTML =
                 '<p class="empty-state">You have no upcoming sessions scheduled.<br><br>' +
                 "When you're ready, book your next session using the button above." +
@@ -179,7 +171,7 @@ async function loadUpcomingSessions(user) {
         }
 
         if (buckets.upcoming && buckets.upcoming.length > 0) {
-            htmlParts.push('<div class="dashboard-section"><h2>Upcoming sessions</h2>');
+            htmlParts.push('<div class="dashboard-section">');
             htmlParts.push(buckets.upcoming.map(function (session) {
                 var formattedTime = (typeof window.formatUserLocalTime === 'function')
                     ? window.formatUserLocalTime(session.session_date)
@@ -208,28 +200,6 @@ async function loadUpcomingSessions(user) {
             htmlParts.push('</div>');
         }
 
-        if (buckets.completed && buckets.completed.length > 0) {
-            htmlParts.push('<div class="dashboard-section"><h2>Completed sessions</h2>');
-            htmlParts.push(buckets.completed.map(function (session) {
-                var formattedTime = (typeof window.formatUserLocalTime === 'function')
-                    ? window.formatUserLocalTime(session.session_date)
-                    : '';
-                var duration = session.duration_minutes
-                    ? (session.duration_minutes + ' minute session')
-                    : '60 minute session';
-
-                return (
-                    '<div class="session-card">' +
-                    '<strong>' + formattedTime + '</strong><br>' +
-                    duration +
-                    '</div>'
-                );
-            }).join(''));
-            htmlParts.push('</div>');
-        }
-
-        // Cancelled sessions are intentionally not rendered; we keep them in buckets.cancelled for potential future UI.
-
         container.innerHTML = htmlParts.join('');
     } catch (e) {
         console.error('Error loading upcoming sessions:', e);
@@ -240,13 +210,14 @@ async function loadLastSession(user) {
     try {
         var supabase = window.supabaseClient;
         if (!supabase) return;
-        var el = document.getElementById('last-session');
-        if (!el) return;
+        var wrap = document.getElementById('last-session');
+        var detailsEl = document.getElementById('last-session-details');
+        if (!wrap || !detailsEl) return;
 
         // Prefer explicit "completed" status if it exists, otherwise fallback to any past session_date.
         var result = await supabase
             .from('sessions')
-            .select('session_date,status')
+            .select('session_date,status,duration_minutes')
             .eq('user_id', user.id)
             .eq('status', 'completed')
             .order('session_date', { ascending: false })
@@ -257,7 +228,7 @@ async function loadLastSession(user) {
             var nowIso = new Date().toISOString();
             var fallback = await supabase
                 .from('sessions')
-                .select('session_date,status')
+                .select('session_date,status,duration_minutes')
                 .eq('user_id', user.id)
                 .lt('session_date', nowIso)
                 .order('session_date', { ascending: false })
@@ -266,23 +237,25 @@ async function loadLastSession(user) {
         }
 
         if (!row || !row.session_date) {
-            el.style.display = 'none';
-            el.innerText = '';
+            wrap.style.display = 'none';
+            detailsEl.textContent = '';
             return;
         }
 
         var formattedTime = (typeof window.formatUserLocalTime === 'function')
             ? window.formatUserLocalTime(row.session_date)
             : '';
-        el.innerText = 'Last session: ' + formattedTime;
-        el.style.display = 'block';
+        var minutes = typeof row.duration_minutes === 'number' && row.duration_minutes > 0
+            ? row.duration_minutes
+            : 60;
+        detailsEl.textContent = formattedTime + ' — ' + minutes + ' min';
+        wrap.style.display = 'block';
     } catch (e) {
         // Silent failure: this is an optional enhancement.
-        var el = document.getElementById('last-session');
-        if (el) {
-            el.style.display = 'none';
-            el.innerText = '';
-        }
+        var wrap = document.getElementById('last-session');
+        var detailsEl = document.getElementById('last-session-details');
+        if (wrap) wrap.style.display = 'none';
+        if (detailsEl) detailsEl.textContent = '';
     }
 }
 
@@ -321,24 +294,4 @@ async function initDashboard() {
 window.addEventListener('DOMContentLoaded', initDashboard);
 
 // (format helpers removed — dashboard renders dates directly)
-
-// Logout Handler (Supabase signOut)
-var logoutLink = document.getElementById('logoutLink');
-if (logoutLink) {
-    logoutLink.addEventListener('click', function (e) {
-        e.preventDefault();
-        var supabase = window.supabaseClient;
-        if (supabase) {
-            supabase.auth.signOut().then(function () {
-                localStorage.removeItem('user');
-                window.location.href = 'index.html';
-            }).catch(function () {
-                localStorage.removeItem('user');
-                window.location.href = 'index.html';
-            });
-        } else {
-            localStorage.removeItem('user');
-            window.location.href = 'index.html';
-        }
-    });
-}
+// Logout: handled globally by script.js → logout confirmation modal + confirm-logout signOut
