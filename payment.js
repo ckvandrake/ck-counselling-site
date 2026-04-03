@@ -67,19 +67,7 @@
     }
 })();
 
-// Mobile menu
-var mobileMenuToggle = document.getElementById("mobileMenuToggle");
-var navMenu = document.getElementById("navMenu");
-if (mobileMenuToggle && navMenu) {
-    mobileMenuToggle.addEventListener("click", function () {
-        navMenu.classList.toggle("active");
-    });
-}
-document.querySelectorAll(".nav-link").forEach(function (link) {
-    link.addEventListener("click", function () {
-        if (navMenu) navMenu.classList.remove("active");
-    });
-});
+// Mobile menu: handled by script.js (loaded before this file on payment.html)
 
 // Update nav Login/Profile from auth state
 function updateLoginLink() {
