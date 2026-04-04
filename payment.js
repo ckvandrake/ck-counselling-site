@@ -67,22 +67,4 @@
     }
 })();
 
-// Mobile menu: handled by script.js (loaded before this file on payment.html)
-
-// Update nav Login/Profile from auth state
-function updateLoginLink() {
-    var loginLink = document.getElementById("loginLink");
-    if (!loginLink) return;
-    var user = localStorage.getItem("user");
-    if (user) {
-        loginLink.textContent = "Profile";
-        loginLink.href = "profile.html";
-    } else {
-        loginLink.textContent = "Login";
-        loginLink.href = "index.html#login";
-    }
-}
-window.addEventListener("DOMContentLoaded", function () {
-    updateLoginLink();
-    window.addEventListener("supabase-session-synced", updateLoginLink);
-});
+// Navbar Login/Profile: script.js → updateNavFromAuth() (Supabase session only)

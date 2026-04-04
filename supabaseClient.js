@@ -8,16 +8,12 @@ window.supabaseClient = supabase.createClient(
 
 console.log("Supabase connected");
 
+/** Auth UI must use supabase.auth.getSession() only — never localStorage for login state. */
 function syncSessionToLocalStorage(session) {
-  const user = session && session.user ? session.user : null;
-
-  if (user) {
-    localStorage.setItem("user", JSON.stringify(user));
-  } else {
+  try {
     localStorage.removeItem("user");
-  }
+  } catch (e) {}
 
-  // Existing pages listen for this to update the navbar.
   window.dispatchEvent(new Event("supabase-session-synced"));
 }
 
@@ -26,7 +22,6 @@ async function syncSessionOnLoad() {
     const { data } = await window.supabaseClient.auth.getSession();
     syncSessionToLocalStorage(data && data.session ? data.session : null);
   } catch (e) {
-    // If session fetch fails, clear localStorage so nav falls back correctly.
     syncSessionToLocalStorage(null);
   }
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Cronje Karuna Van Drake - Professional counselling services focusing on relationship issues, emotional safety, and spirituality. Book your session today.">
-    <meta name="keywords" content="counselling, therapy, relationship counselling, couples therapy, emotional safety, spirituality, walk and talk therapy, forest bathing, corporate wellness">
+    <meta name="keywords" content="counselling, therapy, relationship counselling, couples therapy, emotional safety, spirituality, corporate wellness, workplace support">
     <meta name="author" content="Cronje Karuna Van Drake">
     
     <!-- Open Graph / Facebook -->
@@ -61,16 +61,6 @@
             "@type": "OfferCatalog",
             "name": "Counselling Services",
             "itemListElement": [
-                {
-                    "@type": "Offer",
-                    "itemOffered": {
-                        "@type": "Service",
-                        "name": "1:1 Counselling - Walk & Talk Sessions",
-                        "description": "Therapy in nature, inspired by Shinrin-Yoku (forest bathing)"
-                    },
-                    "price": "150",
-                    "priceCurrency": "USD"
-                },
                 {
                     "@type": "Offer",
                     "itemOffered": {
@@ -168,14 +158,7 @@
                         <h4>Online Sessions</h4>
                         <p class="service-audience">For individuals feeling overwhelmed, stuck, or needing space to process</p>
                         <p class="service-body">Zoom sessions from the comfort of your own space. Counselling tailored to your needs, wherever you are in the world.</p>
-                        <a href="#booking" class="btn btn-secondary service-cta">Book 1:1 Session</a>
-                    </div>
-                    <div class="service-item">
-                        <h3>1:1 Counselling</h3>
-                        <h4>Walk & Talk Sessions</h4>
-                        <p class="service-audience">For those who process better through movement and nature</p>
-                        <p class="service-body">Find reprieve in a natural environment. Movement, breath, and grounded conversation combine to create a unique healing experience. Johannesburg central parks such as Delta and Emmarentia are ideal venues. Meeting place to be arranged after booking. These sessions are naturally weather dependent.</p>
-                        <a href="#booking" class="btn btn-secondary service-cta">Explore Walk & Talk</a>
+                        <a href="pricing-online.html" class="btn btn-secondary service-cta">Book 1:1 Session</a>
                     </div>
                 </div>
                 <div class="services-column services-right">
@@ -184,16 +167,19 @@
                         <h4>Online Sessions</h4>
                         <p class="service-audience">For couples seeking deeper connection, repair, or clarity</p>
                         <p class="service-body">Begin with private intake sessions for each partner (1 hour), followed by guided joint sessions on Zoom. A space to strengthen communication and deepen connection.</p>
-                        <a href="#booking" class="btn btn-secondary service-cta">Begin Couples Work</a>
-                    </div>
-                    <div class="service-item">
-                        <h3>Corporate</h3>
-                        <h4>The Reset Room</h4>
-                        <p class="service-audience">For teams needing space to reset, reflect, and function better</p>
-                        <p class="service-body">People bring their problems to work. Enhance the efficiency of your team by providing a space for team members to offload. Book me for a day and designate a private space in the workplace for individual team members to check-in and reset. Get better results by honouring the humanity of your team.</p>
-                        <a href="#" class="btn btn-secondary service-cta">Enquire About Corporate</a>
+                        <a href="pricing-online.html" class="btn btn-secondary service-cta">Begin Couples Work</a>
                     </div>
                 </div>
+            </div>
+
+            <div class="services-organisations">
+                <h3 class="services-organisations__title">For organisations</h3>
+                <p class="services-organisations__sub">Workplace support for teams under pressure.</p>
+                <a href="reset-room.html" class="services-organisations-card">
+                    <h4 class="services-organisations-card__title">The Reset Room</h4>
+                    <p class="services-organisations-card__desc">In-person sessions designed to help teams reset, reflect, and function better.</p>
+                    <span class="btn btn-secondary service-cta">Learn more</span>
+                </a>
             </div>
         </div>
     </section>
@@ -296,7 +282,7 @@
                         Forgot password?
                       </a>
                     </p>
-                    <button type="submit" class="btn btn-primary btn-full">Login</button>
+                    <button type="submit" id="login-button" class="btn btn-primary btn-full">Login</button>
                     <p class="signup-link">Don't have an account? <a href="#" id="showSignup">Sign up</a></p>
                 </form>
             </div>
@@ -347,11 +333,18 @@
                 </div>
                 <div class="form-group">
                     <label for="signupPassword">Password</label>
-                    <input type="password" id="signupPassword" name="password" required>
+                    <div class="password-field">
+                        <input type="password" id="signupPassword" name="password" required>
+                        <button type="button" class="toggle-password" id="toggle-signup-password" aria-label="Show password">Show</button>
+                    </div>
+                    <div id="password-strength" class="password-strength" aria-live="polite"></div>
                 </div>
                 <div class="form-group">
                     <label for="signupPasswordConfirm">Confirm Password</label>
-                    <input type="password" id="signupPasswordConfirm" name="passwordConfirm" required>
+                    <div class="password-field">
+                        <input type="password" id="signupPasswordConfirm" name="passwordConfirm" required>
+                        <button type="button" class="toggle-password" id="toggle-signup-password-confirm" aria-label="Show password">Show</button>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-full">Create Account</button>
                 <p class="signup-link">Already have an account? <a href="#" id="showLogin">Login</a></p>
@@ -387,7 +380,7 @@
                     <ul>
                         <li><a href="#services">1:1 Counselling</a></li>
                         <li><a href="#services">Couples Counselling</a></li>
-                        <li><a href="#services">The Reset Room</a></li>
+                        <li><a href="reset-room.html">The Reset Room</a></li>
                     </ul>
                 </div>
             </div>

@@ -324,21 +324,136 @@ const showLogin = document.getElementById('showLogin');
 
 function clearLoginError() {
     var errEl = document.getElementById('loginError');
-    if (errEl) errEl.style.display = 'none';
+    if (errEl) {
+        errEl.style.display = 'none';
+        errEl.textContent = 'Incorrect email or password';
+    }
+    var resend = document.getElementById('resend-confirmation');
+    if (resend) resend.remove();
     var emailInput = document.getElementById('loginEmail');
     var passwordInput = document.getElementById('loginPassword');
     if (emailInput) emailInput.classList.remove('error');
     if (passwordInput) passwordInput.classList.remove('error');
 }
 
+function showError(message) {
+    var loginErrorEl = document.getElementById('loginError');
+    if (loginErrorEl) {
+        loginErrorEl.textContent = message || 'Something went wrong.';
+        loginErrorEl.style.display = 'block';
+    } else {
+        showAuthError(message);
+    }
+}
+
+async function resendConfirmationEmail(email) {
+    var supabase = window.supabaseClient;
+    if (!supabase) {
+        showAuthMessage('Error sending email. Try again.');
+        return;
+    }
+    const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email
+    });
+
+    if (error) {
+        showAuthMessage('Error sending email. Try again.');
+    } else {
+        showAuthMessage('Confirmation email sent.');
+    }
+}
+
+function showResendConfirmation(email) {
+    const container = document.querySelector('#loginModal .modal-content');
+    if (!container) return;
+
+    let el = document.getElementById('resend-confirmation');
+
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'resend-confirmation';
+        el.style.marginTop = '12px';
+        el.style.textAlign = 'center';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.innerText = 'Resend confirmation email';
+        btn.style.background = 'none';
+        btn.style.border = 'none';
+        btn.style.color = '#5A1A32';
+        btn.style.cursor = 'pointer';
+        btn.style.textDecoration = 'underline';
+
+        el.appendChild(btn);
+        container.appendChild(el);
+    }
+
+    const btn = el.querySelector('button');
+    if (btn) {
+        btn.onclick = function () {
+            resendConfirmationEmail(email);
+        };
+    }
+}
+
 function openLoginModal() {
     clearLoginError();
+    var pendingEmail = localStorage.getItem('pendingEmail');
+    if (pendingEmail) {
+        var loginEmailInput = document.getElementById('loginEmail');
+        if (loginEmailInput) loginEmailInput.value = pendingEmail;
+    }
     if (loginModal) loginModal.style.display = 'block';
 }
 function closeLoginModal() {
     clearLoginError();
     if (loginModal) loginModal.style.display = 'none';
 }
+
+function closeSignupModal() {
+    if (signupModal) signupModal.style.display = 'none';
+}
+
+/** Global auth info banner (any page that loads script.js) */
+function showAuthMessage(message) {
+    var el = document.getElementById('auth-message');
+
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'auth-message';
+        el.setAttribute('role', 'status');
+        el.setAttribute('aria-live', 'polite');
+        el.style.position = 'fixed';
+        el.style.top = '20px';
+        el.style.left = '50%';
+        el.style.transform = 'translateX(-50%)';
+        el.style.background = '#3b1406';
+        el.style.color = '#fff';
+        el.style.padding = '12px 18px';
+        el.style.borderRadius = '999px';
+        el.style.zIndex = '9999';
+        document.body.appendChild(el);
+    }
+
+    if (window.__authMessageTimer) {
+        clearTimeout(window.__authMessageTimer);
+    }
+
+    el.innerText = message;
+
+    window.__authMessageTimer = setTimeout(function () {
+        if (el && el.parentNode) {
+            el.remove();
+        }
+        window.__authMessageTimer = null;
+    }, 4000);
+}
+
+function showAuthError(message) {
+    alert(message || 'Something went wrong. Please try again.');
+}
+
 window.openLoginModal = openLoginModal;
 
 if (showSignup) {
@@ -450,26 +565,43 @@ const loginForm = document.getElementById('loginForm');
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const loginBtn = document.getElementById('login-button');
         var emailInput = document.getElementById('loginEmail');
         var passwordInput = document.getElementById('loginPassword');
+        var email = emailInput ? emailInput.value.trim() : '';
         clearLoginError();
         var supabase = window.supabaseClient;
         if (!supabase) return;
-        var result = await supabase.auth.signInWithPassword({
-            email: emailInput.value,
-            password: passwordInput.value
-        });
-        var data = result.data;
-        var error = result.error;
-        if (error) {
-            var loginErrorEl = document.getElementById('loginError');
-            if (loginErrorEl) loginErrorEl.style.display = 'block';
-            if (emailInput) emailInput.classList.add('error');
-            if (passwordInput) passwordInput.classList.add('error');
-            return;
+
+        if (loginBtn) loginBtn.disabled = true;
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: passwordInput ? passwordInput.value : ''
+            });
+
+            if (error) {
+                showError(error.message);
+                if (emailInput) emailInput.classList.add('error');
+                if (passwordInput) passwordInput.classList.add('error');
+                return;
+            }
+
+            var user = data.user;
+
+            if (!user || !user.email_confirmed_at) {
+                await supabase.auth.signOut();
+
+                showAuthMessage('Please confirm your email before logging in.');
+
+                showResendConfirmation(email);
+                return;
+            }
+
+            closeLoginModal();
+        } finally {
+            if (loginBtn) loginBtn.disabled = false;
         }
-        console.log("User signed in:", data.user);
-        closeLoginModal();
     });
 
     var loginEmailField = document.getElementById('loginEmail');
@@ -497,69 +629,132 @@ if (loginForm) {
     }
 }
 
-// Signup Form Handler (Supabase Auth + insert into users table)
+function updatePasswordStrengthUI(strength) {
+    var el = document.getElementById('password-strength');
+    if (!el) return;
+
+    if (strength <= 1) {
+        el.textContent = 'Weak';
+        el.className = 'password-strength weak';
+    } else if (strength === 2) {
+        el.textContent = 'Moderate';
+        el.className = 'password-strength moderate';
+    } else {
+        el.textContent = 'Strong';
+        el.className = 'password-strength strong';
+    }
+}
+
+function clearPasswordStrengthUI() {
+    var el = document.getElementById('password-strength');
+    if (!el) return;
+    el.textContent = '';
+    el.className = 'password-strength';
+}
+
+// Signup: email confirmation flow — never treat user as logged in until session exists
 const signupForm = document.getElementById('signupForm');
 if (signupForm) {
-    signupForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const name = document.getElementById('signupName').value;
-        const email = document.getElementById('signupEmail').value;
-        const password = document.getElementById('signupPassword').value;
-        const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
-        
-        if (password !== passwordConfirm) {
-            alert('Passwords do not match');
-            return;
-        }
-        
-        var supabase = window.supabaseClient;
-        if (!supabase) {
-            alert('Authentication is not configured. Please set Supabase URL and key.');
-            return;
-        }
-        
-        try {
-            var result = await supabase.auth.signUp({
-                email: email,
-                password: password,
-                options: { data: { full_name: name } }
-            });
-            var err = result.error;
-            if (err) throw new Error(err.message);
-            
-            var user = result.data.user;
-            if (user) {
-                var insertResult = await supabase.from('profiles').insert({
-                    id: user.id,
-                    email: user.email,
-                    credits_minutes: 0
-                }).select();
-                if (insertResult.error && insertResult.error.code !== '23505') {
-                    console.warn('Profiles insert warning:', insertResult.error.message);
-                }
-            }
-            
-            var session = result.data.session;
-            if (window.__supabaseSyncSession) window.__supabaseSyncSession(session);
-            
-            signupModal.style.display = 'none';
-            if (window.pendingAction) {
+    var signupPasswordInput = document.getElementById('signupPassword');
+    if (signupPasswordInput) {
+        signupPasswordInput.addEventListener('input', function () {
+            var value = signupPasswordInput.value;
+            if (!value) {
+                clearPasswordStrengthUI();
                 return;
             }
-            var params = new URLSearchParams(window.location.search);
-            var redirect = params.get('redirect');
-            if (redirect) {
-                window.location.href = redirect;
-            } else {
-                if (loginLink) {
-                    loginLink.textContent = 'Profile';
-                    loginLink.href = 'profile.html';
-                }
+            var strength = 0;
+            if (value.length >= 8) strength++;
+            if (/[A-Z]/.test(value)) strength++;
+            if (/[0-9]/.test(value)) strength++;
+            if (/[^A-Za-z0-9]/.test(value)) strength++;
+            updatePasswordStrengthUI(strength);
+        });
+    }
+
+    function wireSignupPasswordToggle(toggleBtn, passwordInput) {
+        if (!toggleBtn || !passwordInput) return;
+        toggleBtn.addEventListener('click', function () {
+            var isHidden = passwordInput.type === 'password';
+            passwordInput.type = isHidden ? 'text' : 'password';
+            toggleBtn.textContent = isHidden ? 'Hide' : 'Show';
+            toggleBtn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+        });
+    }
+    wireSignupPasswordToggle(
+        document.getElementById('toggle-signup-password'),
+        document.getElementById('signupPassword')
+    );
+    wireSignupPasswordToggle(
+        document.getElementById('toggle-signup-password-confirm'),
+        document.getElementById('signupPasswordConfirm')
+    );
+
+    signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        var nameField = document.getElementById('signupName');
+        var emailField = document.getElementById('signupEmail');
+        var passwordField = document.getElementById('signupPassword');
+        var passwordConfirmField = document.getElementById('signupPasswordConfirm');
+        var name = nameField ? nameField.value.trim() : '';
+        var email = emailField ? emailField.value.trim() : '';
+        var password = passwordField ? passwordField.value : '';
+        var passwordConfirm = passwordConfirmField ? passwordConfirmField.value : '';
+
+        if (password !== passwordConfirm) {
+            showAuthError('Passwords do not match');
+            return;
+        }
+
+        var supabase = window.supabaseClient;
+        if (!supabase) {
+            showAuthError('Authentication is not configured. Please set Supabase URL and key.');
+            return;
+        }
+
+        try {
+            var signUpPayload = { email: email, password: password };
+            if (name) {
+                signUpPayload.options = { data: { full_name: name } };
             }
-        } catch (error) {
-            alert(error.message || 'Registration failed. Please try again.');
-            console.error('Signup error:', error);
+            const { error } = await supabase.auth.signUp(signUpPayload);
+
+            if (error) {
+                showAuthError(error.message);
+                return;
+            }
+
+            try {
+                localStorage.removeItem('user');
+            } catch (ignore) {}
+
+            try {
+                localStorage.setItem('pendingEmail', email);
+            } catch (ignore) {}
+
+            await supabase.auth.signOut();
+
+            closeSignupModal();
+            signupForm.reset();
+            var togglePw = document.getElementById('toggle-signup-password');
+            var togglePw2 = document.getElementById('toggle-signup-password-confirm');
+            if (togglePw) {
+                togglePw.textContent = 'Show';
+                togglePw.setAttribute('aria-label', 'Show password');
+            }
+            if (togglePw2) {
+                togglePw2.textContent = 'Show';
+                togglePw2.setAttribute('aria-label', 'Show password');
+            }
+            clearPasswordStrengthUI();
+
+            showAuthMessage('Check your email to confirm your account before logging in.');
+
+            window.dispatchEvent(new Event('supabase-session-synced'));
+        } catch (err) {
+            console.error('Signup error:', err);
+            showAuthError(err.message || 'Registration failed. Please try again.');
         }
     });
 }
@@ -607,15 +802,32 @@ async function logout() {
     }
 }
 
-// Check if user is logged in on page load (Supabase session or synced localStorage)
+function setLoginNavLoggedOut() {
+    if (!loginLink) return;
+    loginLink.textContent = 'Login';
+    if (document.getElementById('loginModal')) {
+        loginLink.href = '#login';
+        loginLink.onclick = function (e) {
+            e.preventDefault();
+            openLoginModal();
+        };
+    } else {
+        loginLink.href = 'index.html#login';
+        loginLink.onclick = null;
+    }
+}
+
+// Navbar auth: only a real Supabase session (getSession) toggles Profile vs Login
 function updateNavFromAuth() {
     var supabase = window.supabaseClient;
     if (supabase) {
         supabase.auth.getSession().then(function (result) {
-            var session = result.data.session;
-            if (window.__supabaseSyncSession) window.__supabaseSyncSession(session);
+            var data = result.data;
+            var session = data && data.session;
+            var authed = !!(session && session.user);
+
             if (loginLink) {
-                if (session) {
+                if (authed) {
                     loginLink.textContent = 'Profile';
                     loginLink.href = '#profile';
                     loginLink.onclick = function (e) {
@@ -623,16 +835,11 @@ function updateNavFromAuth() {
                         goToProfile();
                     };
                 } else {
-                    loginLink.textContent = 'Login';
-                    loginLink.href = '#login';
-                    loginLink.onclick = function (e) {
-                        e.preventDefault();
-                        openLoginModal();
-                    };
+                    setLoginNavLoggedOut();
                 }
             }
             if (logoutNavLink) {
-                if (session) {
+                if (authed) {
                     logoutNavLink.style.display = 'inline-block';
                 } else {
                     logoutNavLink.style.display = 'none';
@@ -641,12 +848,7 @@ function updateNavFromAuth() {
             }
         }).catch(function () {
             if (loginLink) {
-                loginLink.textContent = 'Login';
-                loginLink.href = '#login';
-                loginLink.onclick = function (e) {
-                    e.preventDefault();
-                    openLoginModal();
-                };
+                setLoginNavLoggedOut();
             }
             if (logoutNavLink) {
                 logoutNavLink.style.display = 'none';
@@ -654,37 +856,95 @@ function updateNavFromAuth() {
             }
         });
     } else {
-        var userData = localStorage.getItem('user');
         if (loginLink) {
-            if (userData) {
-                loginLink.textContent = 'Profile';
-                loginLink.href = '#profile';
-                loginLink.onclick = function (e) {
-                    e.preventDefault();
-                    goToProfile();
-                };
-            } else {
-                loginLink.textContent = 'Login';
-                loginLink.href = '#login';
-                loginLink.onclick = function (e) {
-                    e.preventDefault();
-                    openLoginModal();
-                };
-            }
+            setLoginNavLoggedOut();
         }
         if (logoutNavLink) {
-            if (userData) {
-                logoutNavLink.style.display = 'inline-block';
-            } else {
-                logoutNavLink.style.display = 'none';
-            }
+            logoutNavLink.style.display = 'none';
             logoutNavLink.onclick = null;
         }
     }
 }
 
-window.addEventListener('DOMContentLoaded', function () {
+window.updateNavFromAuth = updateNavFromAuth;
+
+/** Used by pricing.js: run callback only when session exists (never localStorage). */
+window.requireAuth = function (onAuthed, _returnUrl) {
+    var supabase = window.supabaseClient;
+    if (!supabase) {
+        window.location.href = 'index.html#login';
+        return;
+    }
+    supabase.auth.getSession().then(function (res) {
+        var session = res.data && res.data.session;
+        if (session && session.user) {
+            if (typeof onAuthed === 'function') onAuthed();
+        } else {
+            window.location.href = 'index.html#login';
+        }
+    }).catch(function () {
+        window.location.href = 'index.html#login';
+    });
+};
+
+/** Index page: teal active state on Services / Book a Session from scroll position */
+function initHomePageSectionNavHighlight() {
+    var servicesSection = document.getElementById('services');
+    var bookingSection = document.getElementById('booking');
+    var navMenu = document.getElementById('navMenu');
+    if (!servicesSection || !bookingSection || !navMenu) return;
+
+    var navServices = navMenu.querySelector('a[href="#services"]');
+    var navBooking = navMenu.querySelector('a[href="#booking"]');
+    if (!navServices || !navBooking) return;
+
+    function docTop(el) {
+        return el.getBoundingClientRect().top + window.scrollY;
+    }
+
+    function update() {
+        var marker = window.scrollY + 110;
+        var servicesTop = docTop(servicesSection);
+        var bookingTop = docTop(bookingSection);
+
+        navServices.classList.remove('nav-link--active');
+        navBooking.classList.remove('nav-link--active');
+
+        if (marker >= bookingTop) {
+            navBooking.classList.add('nav-link--active');
+        } else if (marker >= servicesTop) {
+            navServices.classList.add('nav-link--active');
+        }
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    window.addEventListener('hashchange', update);
+    window.addEventListener('load', update);
+    requestAnimationFrame(update);
+}
+
+window.addEventListener('DOMContentLoaded', async function () {
+    var confirmHash = window.location.hash;
+    if (
+        confirmHash &&
+        confirmHash.includes('access_token') &&
+        loginModal &&
+        window.supabaseClient
+    ) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+        try {
+            await window.supabaseClient.auth.signOut();
+        } catch (e) {
+            console.warn('signOut after email confirmation:', e);
+        }
+        openLoginModal();
+        showAuthMessage('Email confirmed. Please log in.');
+        window.dispatchEvent(new Event('supabase-session-synced'));
+    }
+
     updateNavFromAuth();
+    initHomePageSectionNavHighlight();
     checkBookingAccess();
     window.addEventListener('supabase-session-synced', function () {
         updateNavFromAuth();

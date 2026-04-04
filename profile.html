@@ -41,7 +41,7 @@
                     <!-- Get in Touch temporarily removed -->
                     <li><a href="work-with-me.html" class="nav-link">Working Together</a></li>
                     <li><a href="about.html" class="nav-link">About</a></li>
-                    <li><a href="index.html#login" class="nav-link" id="loginLink">Login</a></li>
+                    <li><a href="index.html#login" class="nav-link nav-link--active" id="loginLink">Login</a></li>
                     <li><a href="#" class="nav-link" id="logoutNavLink" style="display:none;">Logout</a></li>
                 </ul>
             </div>
@@ -68,6 +68,7 @@
                 <div class="dashboard-card">
                     <h3>Session Credits</h3>
 
+                    <div id="credits-fade" class="fade-in">
                     <div class="credit-display">
                         <span id="credit-number">--</span>
                         <span class="credit-unit">minutes remaining</span>
@@ -84,15 +85,19 @@
                     </div>
 
                     <a id="credit-cta" href="work-with-me.html" class="primary-btn">
-                        View Session Options
+                        Purchase credits
                     </a>
+                    </div>
                 </div>
 
-                <div class="dashboard-card">
+                <div class="dashboard-card dashboard-card-upcoming">
                     <h3>Upcoming Sessions</h3>
 
+                    <div id="sessions-fade" class="fade-in">
                     <div id="upcoming-sessions">
-                        Loading...
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                    </div>
                     </div>
                 </div>
 
@@ -134,7 +139,7 @@
                     <ul>
                         <li><a href="index.html#services">1:1 Counselling</a></li>
                         <li><a href="index.html#services">Couples Sessions</a></li>
-                        <li><a href="index.html#services">The Reset Room</a></li>
+                        <li><a href="reset-room.html">The Reset Room</a></li>
                     </ul>
                 </div>
             </div>

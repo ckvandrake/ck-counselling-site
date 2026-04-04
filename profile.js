@@ -80,7 +80,7 @@ async function loadCredits(user) {
 
         var cta = document.getElementById('credit-cta');
         if (cta) {
-            cta.innerText = minutes < 30 ? 'Add Session Credits' : 'View Session Options';
+            cta.innerText = 'Purchase credits';
         }
     } catch (e) {
         console.error('Error loading credits:', e);
@@ -138,8 +138,8 @@ async function loadUpcomingSessions(user) {
 
         if (!buckets.upcoming || buckets.upcoming.length === 0) {
             container.innerHTML =
-                '<p class="empty-state">You have no upcoming sessions scheduled.<br><br>' +
-                "When you're ready, book your next session using the button above." +
+                '<p class="empty-state">You don\'t have any upcoming sessions.<br><br>' +
+                'When you\'re ready, you can book your next session using the button above.' +
                 '</p>';
             return;
         }
@@ -274,6 +274,14 @@ async function initDashboard() {
     await loadCredits(user);
     await loadLastSession(user);
     await loadUpcomingSessions(user);
+
+    requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+            document.querySelectorAll('.client-dashboard .fade-in').forEach(function (el) {
+                el.classList.add('loaded');
+            });
+        });
+    });
 }
 
 window.addEventListener('DOMContentLoaded', initDashboard);
