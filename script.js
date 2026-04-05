@@ -1,3 +1,16 @@
+/**
+ * Password rules and strength: validatePassword, getPasswordStrength, getPasswordChecklist
+ * (+ syncPasswordStrengthElement, clearPasswordStrengthElement, showPasswordMinLengthSubmitError)
+ * in ./js/passwordUtils.js
+ */
+import {
+    validatePassword,
+    syncPasswordStrengthElement,
+    clearPasswordStrengthElement,
+    showPasswordMinLengthSubmitError,
+    syncPasswordChecklistUI
+} from './js/passwordUtils.js';
+
 // Mobile Menu Toggle
 const mobileMenuToggle = document.getElementById('mobileMenuToggle');
 const navMenu = document.getElementById('navMenu');
@@ -613,7 +626,7 @@ if (loginForm) {
         loginPasswordField.addEventListener('input', clearLoginError);
     }
 
-    var loginPasswordToggle = document.querySelector('#loginForm .toggle-password');
+    var loginPasswordToggle = document.getElementById('togglePassword');
     if (loginPasswordToggle && loginPasswordField) {
         loginPasswordToggle.addEventListener('click', function () {
             if (loginPasswordField.type === 'password') {
@@ -634,9 +647,11 @@ const signupForm = document.getElementById('signupForm');
 if (signupForm) {
     var signupPasswordInput = document.getElementById('signupPassword');
     var signupStrengthEl = document.getElementById('password-strength');
-    if (signupPasswordInput && window.PasswordPolicy) {
+    if (signupPasswordInput && signupStrengthEl) {
         signupPasswordInput.addEventListener('input', function () {
-            window.PasswordPolicy.syncPasswordStrength(signupPasswordInput, signupStrengthEl);
+            var v = signupPasswordInput.value;
+            syncPasswordStrengthElement(v, signupStrengthEl);
+            syncPasswordChecklistUI(v);
         });
     }
 
@@ -671,12 +686,8 @@ if (signupForm) {
         var passwordConfirm = passwordConfirmField ? passwordConfirmField.value : '';
         var strengthEl = document.getElementById('password-strength');
 
-        if (window.PasswordPolicy) {
-            if (!window.PasswordPolicy.validateMinLengthOnSubmit(password, strengthEl)) {
-                return;
-            }
-        } else if (password.length < 10) {
-            showAuthError('Password must be at least 10 characters');
+        if (!validatePassword(password)) {
+            showPasswordMinLengthSubmitError(strengthEl);
             return;
         }
 
@@ -725,9 +736,10 @@ if (signupForm) {
                 togglePw2.textContent = 'Show';
                 togglePw2.setAttribute('aria-label', 'Show password');
             }
-            if (window.PasswordPolicy && strengthEl) {
-                window.PasswordPolicy.clearStrength(strengthEl);
+            if (strengthEl) {
+                clearPasswordStrengthElement(strengthEl);
             }
+            syncPasswordChecklistUI('');
 
             showAuthMessage('Check your email to confirm your account before logging in.');
 

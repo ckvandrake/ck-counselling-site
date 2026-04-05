@@ -1262,25 +1262,27 @@ section {
     font-size: 0.95rem;
 }
 
-.modal .password-field {
+.password-wrapper {
     position: relative;
 }
 
-.modal .password-field input {
+.modal .password-wrapper input {
     padding-right: 64px;
     width: 100%;
     box-sizing: border-box;
 }
 
-.modal .toggle-password {
+#togglePassword,
+#toggleConfirmPassword,
+.modal .password-wrapper .toggle-password {
     position: absolute;
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #2f7f73;
-    font-size: 0.85rem;
+    font-size: 13px;
+    color: #6f8f88;
     cursor: pointer;
     padding: 0;
     margin: 0;
@@ -1289,7 +1291,9 @@ section {
     line-height: 1.2;
 }
 
-.modal .toggle-password:hover {
+#togglePassword:hover,
+#toggleConfirmPassword:hover,
+.modal .password-wrapper .toggle-password:hover {
     opacity: 0.85;
 }
 
@@ -1310,6 +1314,23 @@ section {
 }
 
 .password-strength.strong {
+    color: #2e7d32;
+}
+
+.password-checklist {
+    list-style: none;
+    padding: 0;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #7a6f6a;
+}
+
+.password-checklist li {
+    margin-bottom: 4px;
+    transition: color 0.2s ease;
+}
+
+.password-checklist li.valid {
     color: #2e7d32;
 }
 
@@ -1354,7 +1375,7 @@ section {
 }
 
 .modal .form-group input.error,
-.modal .password-field input.error {
+.modal .password-wrapper input.error {
     border-color: #b00020;
 }
 
@@ -1714,8 +1735,9 @@ textarea:focus {
     align-items: center;
     justify-content: center;
     text-align: center;
+    gap: 12px;
 
-    padding: 26px 20px;
+    padding: 18px 20px;
 
     font-size: 1.25rem;
     font-weight: 500;
@@ -1727,35 +1749,67 @@ textarea:focus {
   }
 
   .credit-action {
-    margin-top: 16px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #credit-action:empty {
+    display: none;
   }
 
   .credit-btn {
     display: inline-block;
-    margin-top: 8px;
+    margin: 0;
     padding: 12px 24px;
-    background: #7A1E3A;
+    background: #3A7D73;
     color: #ffffff;
     border-radius: 30px;
     font-size: 0.95rem;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .credit-btn:hover {
-    background: #5A1A32;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    background: #271209;
+    box-shadow: 0 6px 16px rgba(39, 18, 9, 0.18);
+  }
+
+  .credit-btn-secondary {
+    display: inline-block;
+    margin: 0;
+    padding: 6px 14px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: rgba(107, 90, 69, 0.78);
+    text-decoration: none;
+    border: 1px solid rgba(107, 90, 69, 0.22);
+    border-radius: 999px;
+    background: transparent;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .credit-btn-secondary:hover {
+    color: #5a4a38;
+    border-color: rgba(107, 90, 69, 0.38);
+    background-color: rgba(255, 255, 255, 0.45);
   }
 
   #credit-message {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
+    display: block;
+    max-width: min(32em, 100%);
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 
-    font-size: 1.35rem;
+    font-size: 1.08rem;
     font-weight: 500;
-    line-height: 1.4;
+    line-height: 1.45;
   }
 
   #credit-icon svg {
@@ -1764,28 +1818,33 @@ textarea:focus {
   }
 
   .credit-normal {
-    background: transparent;
-    color: #7A1E3A;
+    background: linear-gradient(
+      180deg,
+      #faf9f7 0%,
+      #f4f1ed 100%
+    );
+    color: #4a1f2e;
+    border-bottom: 1px solid rgba(74, 31, 46, 0.12);
   }
 
   .credit-warning {
     background: linear-gradient(
       180deg,
-      #fff6ec 0%,
-      #ffe9d2 100%
+      #fbf8f2 0%,
+      #f1e8d8 100%
     );
-    color: #b45309;
-    border-bottom: 1px solid #f4b183;
+    color: #6b5a45;
+    border-bottom: 1px solid rgba(179, 152, 118, 0.45);
   }
 
   .credit-critical {
     background: linear-gradient(
       180deg,
-      #ffeceb 0%,
-      #ffd6d3 100%
+      #fdf9f8 0%,
+      #f3e8e6 100%
     );
-    color: #b42318;
-    border-bottom: 1px solid #fda29b;
+    color: #9a4a4a;
+    border-bottom: 1px solid rgba(196, 140, 135, 0.55);
   }
 
 .about-hero {
@@ -2728,13 +2787,13 @@ textarea:focus {
 /* Subtle pulse for critical credit banner */
 @keyframes creditPulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(180, 35, 24, 0.25);
+    box-shadow: 0 0 0 0 rgba(154, 74, 74, 0.18);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(180, 35, 24, 0);
+    box-shadow: 0 0 0 10px rgba(154, 74, 74, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(180, 35, 24, 0);
+    box-shadow: 0 0 0 0 rgba(154, 74, 74, 0);
   }
 }
 

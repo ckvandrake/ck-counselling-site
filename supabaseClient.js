@@ -27,6 +27,38 @@ async function syncSessionOnLoad() {
 }
 
 syncSessionOnLoad();
+
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/** First name for personalised booking copy; calm fallback if unknown. */
+function getBookingFirstName(user) {
+  if (!user) return "there";
+  var meta = user.user_metadata || {};
+  var full = (meta.full_name || meta.name || "").trim();
+  if (full) {
+    var first = full.split(/\s+/)[0];
+    if (first) return first;
+  }
+  if (meta.first_name && String(meta.first_name).trim()) {
+    return String(meta.first_name).trim();
+  }
+  var email = user.email;
+  if (email && email.indexOf("@") !== -1) {
+    var local = email.split("@")[0];
+    var token = local.split(/[.+_-]/)[0];
+    if (token) {
+      return token.charAt(0).toUpperCase() + token.slice(1).toLowerCase();
+    }
+  }
+  return "there";
+}
+
 async function updateBookingAccess() {
   const { data: { user } } = await window.supabaseClient.auth.getUser();
 
@@ -62,13 +94,8 @@ async function updateBookingAccess() {
 
   // 👉 Update credit banner appearance based on remaining minutes
   const banner = document.getElementById("credit-banner");
-  const minutesSpan = document.getElementById("credit-minutes");
   const messageEl = document.getElementById("credit-message");
   const actionEl = document.getElementById("credit-action");
-
-  if (minutesSpan) {
-    minutesSpan.innerText = minutes;
-  }
 
   if (banner) {
     banner.classList.remove("credit-normal","credit-warning","credit-critical","credit-pulse");
@@ -76,22 +103,20 @@ async function updateBookingAccess() {
       actionEl.innerHTML = "";
     }
 
-    // Derive a friendly name for the user if possible
-    var userName =
-      (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) ||
-      user.email ||
-      "there";
+    var firstName = escapeHtml(getBookingFirstName(user));
+    var line1 =
+      "Hey " + firstName + ", your available session time is " + minutes + " minutes.";
+    var line2;
 
     if (minutes < 30) {
       banner.classList.add("credit-critical");
+      line2 = "You will need additional credits soon.";
       if (messageEl) {
-        messageEl.innerHTML =
-          'Hey ' + userName + ', your available session time is ' + minutes + ' minutes.<br>' +
-          'You may need additional credits soon.';
+        messageEl.innerHTML = line1 + "<br>" + line2;
       }
       if (actionEl) {
         actionEl.innerHTML =
-          '<a href="work-with-me.html" class="credit-btn">View Session Options</a>';
+          '<a href="pricing-online.html" class="credit-btn">Purchase Credits</a>';
       }
       // Trigger gentle pulse every ~8 seconds
       if (!window.__creditPulseInterval) {
@@ -108,9 +133,13 @@ async function updateBookingAccess() {
       }
     } else if (minutes < 120) {
       banner.classList.add("credit-warning");
+      line2 = "You're in a good range — just keep an eye on your usage.";
       if (messageEl) {
-        messageEl.innerHTML =
-          'Available session time: <span id="credit-minutes">' + minutes + '</span> minutes';
+        messageEl.innerHTML = line1 + "<br>" + line2;
+      }
+      if (actionEl) {
+        actionEl.innerHTML =
+          '<a href="pricing-online.html" class="credit-btn-secondary">Top Up Credits</a>';
       }
       if (window.__creditPulseInterval) {
         clearInterval(window.__creditPulseInterval);
@@ -118,9 +147,9 @@ async function updateBookingAccess() {
       }
     } else {
       banner.classList.add("credit-normal");
+      line2 = "You're well covered!";
       if (messageEl) {
-        messageEl.innerHTML =
-          'Available session time: <span id="credit-minutes">' + minutes + '</span> minutes';
+        messageEl.innerHTML = line1 + "<br>" + line2;
       }
       if (window.__creditPulseInterval) {
         clearInterval(window.__creditPulseInterval);
