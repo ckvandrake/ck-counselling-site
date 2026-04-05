@@ -629,46 +629,14 @@ if (loginForm) {
     }
 }
 
-function updatePasswordStrengthUI(strength) {
-    var el = document.getElementById('password-strength');
-    if (!el) return;
-
-    if (strength <= 1) {
-        el.textContent = 'Weak';
-        el.className = 'password-strength weak';
-    } else if (strength === 2) {
-        el.textContent = 'Moderate';
-        el.className = 'password-strength moderate';
-    } else {
-        el.textContent = 'Strong';
-        el.className = 'password-strength strong';
-    }
-}
-
-function clearPasswordStrengthUI() {
-    var el = document.getElementById('password-strength');
-    if (!el) return;
-    el.textContent = '';
-    el.className = 'password-strength';
-}
-
 // Signup: email confirmation flow — never treat user as logged in until session exists
 const signupForm = document.getElementById('signupForm');
 if (signupForm) {
     var signupPasswordInput = document.getElementById('signupPassword');
-    if (signupPasswordInput) {
+    var signupStrengthEl = document.getElementById('password-strength');
+    if (signupPasswordInput && window.PasswordPolicy) {
         signupPasswordInput.addEventListener('input', function () {
-            var value = signupPasswordInput.value;
-            if (!value) {
-                clearPasswordStrengthUI();
-                return;
-            }
-            var strength = 0;
-            if (value.length >= 8) strength++;
-            if (/[A-Z]/.test(value)) strength++;
-            if (/[0-9]/.test(value)) strength++;
-            if (/[^A-Za-z0-9]/.test(value)) strength++;
-            updatePasswordStrengthUI(strength);
+            window.PasswordPolicy.syncPasswordStrength(signupPasswordInput, signupStrengthEl);
         });
     }
 
@@ -701,6 +669,16 @@ if (signupForm) {
         var email = emailField ? emailField.value.trim() : '';
         var password = passwordField ? passwordField.value : '';
         var passwordConfirm = passwordConfirmField ? passwordConfirmField.value : '';
+        var strengthEl = document.getElementById('password-strength');
+
+        if (window.PasswordPolicy) {
+            if (!window.PasswordPolicy.validateMinLengthOnSubmit(password, strengthEl)) {
+                return;
+            }
+        } else if (password.length < 10) {
+            showAuthError('Password must be at least 10 characters');
+            return;
+        }
 
         if (password !== passwordConfirm) {
             showAuthError('Passwords do not match');
@@ -747,7 +725,9 @@ if (signupForm) {
                 togglePw2.textContent = 'Show';
                 togglePw2.setAttribute('aria-label', 'Show password');
             }
-            clearPasswordStrengthUI();
+            if (window.PasswordPolicy && strengthEl) {
+                window.PasswordPolicy.clearStrength(strengthEl);
+            }
 
             showAuthMessage('Check your email to confirm your account before logging in.');
 
