@@ -24,7 +24,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <link rel="manifest" href="/manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&display=swap" rel="stylesheet">
@@ -351,6 +351,14 @@
                         <button type="button" class="toggle-password" id="toggle-signup-password-confirm" aria-label="Show password">Show</button>
                     </div>
                 </div>
+                <div class="consent-block">
+                    <label class="checkbox-field">
+                        <input type="checkbox" id="marketingOptIn" name="marketingOptIn" />
+                        <span>
+                            I’d like to receive occasional updates and newsletters
+                        </span>
+                    </label>
+                </div>
                 <button type="submit" class="btn btn-primary btn-full">Create Account</button>
                 <p class="signup-link">Already have an account? <a href="#" id="showLogin">Login</a></p>
             </form>
@@ -411,4 +419,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabaseClient.js"></script>
     <script type="module" src="script.js"></script>
-
+    <script src="/js/pwa-install.js" defer></script>
+</body>
+</html>

@@ -1334,6 +1334,41 @@ section {
     color: #2e7d32;
 }
 
+.consent-block {
+    margin-top: 18px;
+    margin-bottom: 18px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.checkbox-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #5f5650;
+    cursor: pointer;
+    margin: 0;
+    font-weight: inherit;
+}
+
+.checkbox-field:hover {
+    color: #3e6f66;
+}
+
+.checkbox-field input {
+    margin-top: 3px;
+    flex-shrink: 0;
+    transform: scale(1.1);
+    transform-origin: left center;
+}
+
+.checkbox-field span {
+    display: block;
+}
+
 .modal .login-form .btn-primary.btn-full,
 .modal .login-form button.btn-primary.btn-full {
     padding: 10px 16px;
@@ -3363,4 +3398,121 @@ textarea:focus {
     .reset-room-page .reset-room-price-figures {
         font-size: 1.08rem;
     }
+}
+
+/* --- PWA install banner (js/pwa-install.js) --- */
+.install-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10050;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  pointer-events: none;
+}
+
+.install-banner.hidden {
+  display: none !important;
+}
+
+.install-banner__inner {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 18px 18px 16px;
+  background: #faf8f5;
+  border: 1px solid rgba(63, 125, 115, 0.18);
+  border-radius: 16px;
+  box-shadow:
+    0 8px 28px rgba(39, 18, 9, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  pointer-events: auto;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.install-banner__text,
+.install-banner__steps {
+  margin: 0 0 14px;
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #3a2a22;
+}
+
+.install-banner__steps {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #554840;
+  margin-bottom: 16px;
+}
+
+.install-banner .hidden {
+  display: none !important;
+}
+
+.install-banner__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+}
+
+@media (min-width: 480px) {
+  .install-banner__actions {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+.install-banner__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 12px 20px;
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.install-banner__btn--primary {
+  background: #3f7d73;
+  border-color: #3f7d73;
+  color: #ffffff;
+}
+
+.install-banner__btn--primary:hover {
+  background: #356b62;
+  border-color: #356b62;
+}
+
+.install-banner__btn--primary:focus-visible {
+  outline: 3px solid rgba(63, 125, 115, 0.45);
+  outline-offset: 2px;
+}
+
+.install-banner__btn--ghost {
+  background: transparent;
+  border-color: rgba(59, 20, 8, 0.2);
+  color: #4a3b35;
+}
+
+.install-banner__btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(59, 20, 8, 0.35);
+}
+
+.install-banner__btn--ghost:focus-visible {
+  outline: 3px solid rgba(63, 125, 115, 0.35);
+  outline-offset: 2px;
 }

@@ -681,6 +681,9 @@ if (signupForm) {
         var passwordField = document.getElementById('signupPassword');
         var passwordConfirmField = document.getElementById('signupPasswordConfirm');
         var name = nameField ? nameField.value.trim() : '';
+        var marketingOptIn = document.getElementById('marketingOptIn')
+            ? document.getElementById('marketingOptIn').checked
+            : false;
         var email = emailField ? emailField.value.trim() : '';
         var password = passwordField ? passwordField.value : '';
         var passwordConfirm = passwordConfirmField ? passwordConfirmField.value : '';
@@ -704,14 +707,34 @@ if (signupForm) {
 
         try {
             var signUpPayload = { email: email, password: password };
+            signUpPayload.options = {
+                data: {
+                    marketing_opt_in: marketingOptIn
+                }
+            };
             if (name) {
-                signUpPayload.options = { data: { full_name: name } };
+                signUpPayload.options.data.full_name = name;
             }
-            const { error } = await supabase.auth.signUp(signUpPayload);
+            const { data: signData, error } = await supabase.auth.signUp(signUpPayload);
 
             if (error) {
                 showAuthError(error.message);
                 return;
+            }
+
+            var newUser = signData && signData.user;
+            if (newUser && newUser.id) {
+                var profilePayload = {
+                    id: newUser.id,
+                    email: newUser.email || email,
+                    marketing_opt_in: marketingOptIn
+                };
+                var profileResult = await supabase
+                    .from('profiles')
+                    .upsert(profilePayload, { onConflict: 'id' });
+                if (profileResult.error) {
+                    console.warn('profiles marketing_opt_in sync:', profileResult.error.message);
+                }
             }
 
             try {
