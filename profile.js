@@ -1,5 +1,53 @@
 // Mobile menu: handled by script.js (loaded before this file on profile.html)
 
+function escapeHtmlCredit(text) {
+    return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+/** Same first-name rules as booking credit banner (supabaseClient). */
+function getCreditFirstName(user) {
+    if (!user) return 'there';
+    var meta = user.user_metadata || {};
+    var full = (meta.full_name || meta.name || '').trim();
+    if (full) {
+        var first = full.split(/\s+/)[0];
+        if (first) return first;
+    }
+    if (meta.first_name && String(meta.first_name).trim()) {
+        return String(meta.first_name).trim();
+    }
+    var email = user.email;
+    if (email && email.indexOf('@') !== -1) {
+        var local = email.split('@')[0];
+        var token = local.split(/[.+_-]/)[0];
+        if (token) {
+            return token.charAt(0).toUpperCase() + token.slice(1).toLowerCase();
+        }
+    }
+    return 'there';
+}
+
+/** Two lines; wording aligned with book-a-session credit banner (line 2 exact match). */
+function renderSessionCreditsCopy(user, minutes) {
+    var el = document.getElementById('credit-explanation');
+    if (!el) return;
+    var first = escapeHtmlCredit(getCreditFirstName(user));
+    var line1 = 'Hey ' + first + ', you have ' + minutes + ' minutes remaining.';
+    var line2;
+    if (minutes < 30) {
+        line2 = 'You will need additional credits soon.';
+    } else if (minutes < 120) {
+        line2 = "You're in a good range — just keep an eye on your usage.";
+    } else {
+        line2 = "You're well covered!";
+    }
+    el.innerHTML = line1 + '<br>' + line2;
+}
+
 async function checkAuth() {
     try {
         var supabase = window.supabaseClient;
@@ -49,17 +97,32 @@ async function loadCredits(user) {
         }
         if (minutes === null) minutes = 0;
 
+        var creditsCard = document.getElementById('session-credits-card');
+        if (creditsCard) {
+            creditsCard.classList.remove(
+                'session-credits--low',
+                'session-credits--medium',
+                'session-credits--high'
+            );
+            if (minutes < 30) {
+                creditsCard.classList.add('session-credits--low');
+            } else if (minutes < 120) {
+                creditsCard.classList.add('session-credits--medium');
+            } else {
+                creditsCard.classList.add('session-credits--high');
+            }
+        }
+
         var numberEl = document.getElementById('credit-number');
         if (numberEl) numberEl.innerText = String(minutes);
 
-        var explanation = document.getElementById('credit-explanation');
         var bar = document.getElementById('credit-bar-fill');
         var maxCredits = 240;
         var percentage = Math.min((minutes / maxCredits) * 100, 100);
         if (bar) {
             bar.style.width = percentage + '%';
             bar.classList.remove('credit-bar-good', 'credit-bar-warning', 'credit-bar-critical');
-            if (minutes > 120) {
+            if (minutes >= 120) {
                 bar.classList.add('credit-bar-good');
             } else if (minutes >= 30) {
                 bar.classList.add('credit-bar-warning');
@@ -68,24 +131,44 @@ async function loadCredits(user) {
             }
         }
 
-        if (explanation) {
-            if (minutes >= 90) {
-                explanation.innerText = 'You have enough time for a full session.';
-            } else if (minutes >= 30) {
-                explanation.innerText = 'You have limited session time remaining.';
-            } else {
-                explanation.innerText = 'Your remaining time may not cover a full session.';
-            }
-        }
+        renderSessionCreditsCopy(user, minutes);
 
         var cta = document.getElementById('credit-cta');
         if (cta) {
-            cta.innerText = 'Purchase credits';
+            if (minutes >= 120) {
+                cta.style.display = 'none';
+                cta.setAttribute('aria-hidden', 'true');
+            } else {
+                cta.style.display = '';
+                cta.removeAttribute('aria-hidden');
+                if (minutes < 30) {
+                    cta.className = 'primary-btn';
+                    cta.textContent = 'Purchase credits';
+                } else {
+                    cta.className = 'credit-cta--topup';
+                    cta.textContent = 'Top up credits';
+                }
+            }
         }
     } catch (e) {
         console.error('Error loading credits:', e);
         var numberEl = document.getElementById('credit-number');
         if (numberEl) numberEl.innerText = '--';
+        var creditsCard = document.getElementById('session-credits-card');
+        if (creditsCard) {
+            creditsCard.classList.remove(
+                'session-credits--low',
+                'session-credits--medium',
+                'session-credits--high'
+            );
+        }
+        var cta = document.getElementById('credit-cta');
+        if (cta) {
+            cta.style.display = '';
+            cta.removeAttribute('aria-hidden');
+            cta.className = 'primary-btn';
+            cta.textContent = 'Purchase credits';
+        }
     }
 }
 

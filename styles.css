@@ -2328,7 +2328,7 @@ textarea:focus {
   box-shadow: 0 6px 16px rgba(42, 157, 143, 0.28);
 }
 
-/* Match Session Credits bar burgundy (.credit-bar-good); ~20% smaller than global .primary-btn */
+/* Session Credits CTA; ~20% smaller than global .primary-btn */
 .portal-page #credit-cta.primary-btn {
   background: #7A1E3A;
   border-color: #7A1E3A;
@@ -2345,6 +2345,36 @@ textarea:focus {
   color: #ffffff;
   box-shadow: 0 8px 18px rgba(42, 157, 143, 0.3);
   transform: translateY(-1px);
+}
+
+/* Session Credits — medium state: quiet top-up (matches booking secondary CTA tone) */
+.portal-page #credit-cta.credit-cta--topup {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  padding: 8px 18px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(107, 90, 69, 0.82);
+  text-decoration: none;
+  border: 1px solid rgba(107, 90, 69, 0.24);
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.portal-page #credit-cta.credit-cta--topup:hover {
+  color: #5a4a38;
+  border-color: rgba(107, 90, 69, 0.4);
+  background-color: rgba(255, 255, 255, 0.5);
+  transform: none;
+  box-shadow: none;
 }
 
 .avatar-circle {
@@ -2385,6 +2415,68 @@ textarea:focus {
 .dashboard-card h3 {
   font-size: 1.25rem;
   margin-bottom: 14px;
+}
+
+/* Session Credits card — calm state cues (profile only) */
+.session-credits-card {
+  transition:
+    background-color 0.4s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.session-credits-card.session-credits--low {
+  background: color-mix(in srgb, #f7f4ef 93%, #dba9a4 7%);
+}
+
+.session-credits-card.session-credits--medium {
+  background: color-mix(in srgb, #f7f4ef 90%, #dfc9a0 10%);
+}
+
+.session-credits-card.session-credits--high {
+  background: color-mix(in srgb, #f7f4ef 92%, #a8cfc6 8%);
+}
+
+.session-credits-card #credit-number {
+  color: #2f6f6a;
+  transition: color 0.35s ease;
+}
+
+.session-credits-card.session-credits--low #credit-number {
+  color: #8f5f5c;
+}
+
+.session-credits-card.session-credits--medium #credit-number {
+  color: #7a6a52;
+}
+
+.session-credits-card.session-credits--low .credit-bar {
+  background: color-mix(in srgb, #e9e4dd 82%, #e0c5c2 18%);
+}
+
+.session-credits-card.session-credits--medium .credit-bar {
+  background: color-mix(in srgb, #e9e4dd 78%, #e5d9c4 22%);
+}
+
+.session-credits-card.session-credits--high .credit-bar {
+  background: color-mix(in srgb, #e9e4dd 85%, #c5ddd6 15%);
+}
+
+/* Session Credits — tighter vertical rhythm; number + copy read as one block */
+.session-credits-card .credit-unit {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1.35;
+}
+
+.session-credits-card .credit-bar {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.session-credits-card #credit-explanation {
+  margin-top: 0;
+  margin-bottom: 16px;
 }
 
 .fade-in {
@@ -2447,6 +2539,11 @@ textarea:focus {
   margin-bottom: 10px;
 }
 
+.session-credits-card .credit-display {
+  color: inherit;
+  margin-bottom: 4px;
+}
+
 .credit-unit {
   display: block;
   font-size: 1rem;
@@ -2468,22 +2565,24 @@ textarea:focus {
   transition: width .4s ease;
 }
 
-/* Profile dashboard session credits bar (burgundy scale; only used on profile.html) */
+/* Profile session credits fill — soft teal / amber / rose (only used on profile.html) */
 .credit-bar-good {
-  background: #7A1E3A;
+  background: linear-gradient(90deg, #4f9d91 0%, #3d8c81 100%);
 }
 
 .credit-bar-warning {
-  background: #8C2A4A;
+  background: linear-gradient(90deg, #c4a872 0%, #b89765 100%);
 }
 
 .credit-bar-critical {
-  background: #5A1A32;
+  background: linear-gradient(90deg, #c69a93 0%, #b88b84 100%);
 }
 
 #credit-explanation {
   font-size: .95rem;
   color: #6b6b6b;
+  line-height: 1.45;
+  max-width: 32em;
   margin-bottom: 20px;
 }
 
