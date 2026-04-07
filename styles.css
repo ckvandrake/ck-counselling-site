@@ -3709,16 +3709,34 @@ textarea:focus {
     }
 
     .reset-room-page .reset-room-price-grid {
-        column-gap: 0.5rem;
-        row-gap: 1.25rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        column-gap: 0;
+        row-gap: 0.35rem;
+        max-width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .reset-room-page .reset-room-price-sep {
+        display: none;
     }
 
     .reset-room-page .reset-room-price-label {
+        justify-self: center;
+        text-align: center;
         font-size: 0.98rem;
     }
 
     .reset-room-page .reset-room-price-figures {
+        justify-self: center;
+        text-align: center;
         font-size: 1.08rem;
+        margin-bottom: 1.15rem;
+    }
+
+    .reset-room-page .reset-room-price-figures:last-child {
+        margin-bottom: 0;
     }
 }
 
@@ -4003,8 +4021,10 @@ textarea:focus {
     font-size: clamp(20px, 5.1vw, 24px);
   }
 
-  .services .service-item h4 {
-    font-size: clamp(18px, 4.4vw, 21px);
+  /* h4 (e.g. Online Sessions) matches badge; both ~1–2px under h3 (1:1 Counselling) */
+  .services .service-item h4,
+  .services .service-badge {
+    font-size: clamp(18px, 4.4vw, 22px);
   }
 
   .services .service-item .service-body {
@@ -4013,10 +4033,6 @@ textarea:focus {
 
   .services .service-audience {
     font-size: clamp(15px, 3.78vw, 17px);
-  }
-
-  .services .service-badge {
-    font-size: 0.975rem;
   }
 
   /* Narrower than full-bleed .btn; width capped to editorial measure (not wider than body copy) */
@@ -4230,19 +4246,22 @@ textarea:focus {
     margin-bottom: 6px;
   }
 
-  /* Cal.com / booking embed */
+  /* Cal.com / booking embed — extra inset so users can scroll past the iframe on touch */
   .booking .container {
     overflow-x: clip;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 24px;
+    padding-right: 24px;
     box-sizing: border-box;
   }
 
   .booking-container {
-    padding: 0 12px;
+    padding: 0;
     overflow-x: clip;
     box-sizing: border-box;
+    width: 94%;
     max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .booking-container iframe {
