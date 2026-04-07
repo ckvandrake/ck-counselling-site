@@ -11,7 +11,14 @@ let activeUiAutoTimer;
 
 function getLogoSrc() {
     var img = document.querySelector('.logo-divider');
-    if (img && img.src) return img.src;
+    if (img) {
+        if (img.complete && img.naturalWidth > 0 && (img.currentSrc || img.src)) {
+            return img.currentSrc || img.src;
+        }
+        var attr = img.getAttribute('src');
+        if (attr) return attr;
+        if (img.src) return img.src;
+    }
     return 'images/CK Van Drizzle Logo .png';
 }
 
@@ -33,7 +40,8 @@ export function ensureUiOverlay() {
     spinImg.alt = '';
     spinImg.width = 56;
     spinImg.height = 56;
-    spinImg.decoding = 'async';
+    spinImg.loading = 'eager';
+    spinImg.decoding = 'sync';
     loaderEl.appendChild(spinImg);
 
     modalEl = document.createElement('div');

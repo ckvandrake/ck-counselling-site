@@ -12,6 +12,7 @@ import {
 } from './js/passwordUtils.js';
 
 import {
+    ensureUiOverlay,
     showLoader,
     hideLoader,
     showUiModal,
@@ -39,6 +40,8 @@ document.querySelectorAll('.nav-link').forEach(link => {
 
 /* Pre-navigation loading: show brand loader on same-origin navigations only (instant; no preventDefault / no delays). */
 (function initPreNavigationOverlay() {
+    ensureUiOverlay();
+
     document.querySelectorAll('a[href]').forEach(function (link) {
         link.addEventListener('click', function (e) {
             var href = link.getAttribute('href');
