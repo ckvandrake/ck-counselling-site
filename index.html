@@ -255,7 +255,7 @@
     </section>
 
     <!-- Login Modal -->
-    <div id="loginModal" class="modal">
+    <div id="loginModal" class="modal ui-overlay">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <div id="login-view">
@@ -316,7 +316,7 @@
     </div>
 
     <!-- Signup Modal -->
-    <div id="signupModal" class="modal">
+    <div id="signupModal" class="modal ui-overlay">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2>Create Account</h2>
@@ -366,11 +366,11 @@
     </div>
 
     <!-- Success Message -->
-    <div id="successMessage" class="success-message" style="display: none;">
-        <div class="success-content">
+    <div id="successMessage" class="success-message ui-overlay" aria-hidden="true">
+        <div class="success-content ui-modal ui-modal--wide">
             <h2>Booking Confirmed!</h2>
             <p>Your session has been booked successfully. A confirmation email with your Zoom link has been sent to your email address.</p>
-            <button class="btn btn-primary" id="closeSuccess">Close</button>
+            <button type="button" class="btn btn-primary" id="closeSuccess">Close</button>
         </div>
     </div>
 

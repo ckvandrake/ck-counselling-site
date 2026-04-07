@@ -11,6 +11,15 @@ import {
     syncPasswordChecklistUI
 } from './js/passwordUtils.js';
 
+import {
+    showLoader,
+    hideLoader,
+    showUiModal,
+    registerUiModalEscape,
+    scheduleUiModalAutoHide,
+    resetGlobalOverlayAfterNavigation
+} from './js/uiOverlay.js';
+
 // Mobile Menu Toggle
 const mobileMenuToggle = document.getElementById('mobileMenuToggle');
 const navMenu = document.getElementById('navMenu');
@@ -27,6 +36,56 @@ document.querySelectorAll('.nav-link').forEach(link => {
         navMenu.classList.remove('active');
     });
 });
+
+/* Pre-navigation loading: show brand loader on same-origin navigations only (instant; no preventDefault / no delays). */
+(function initPreNavigationOverlay() {
+    document.querySelectorAll('a[href]').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            var href = link.getAttribute('href');
+            if (
+                !href ||
+                href === '#' ||
+                href.startsWith('#') ||
+                href.startsWith('mailto:') ||
+                href.startsWith('tel:') ||
+                href.startsWith('javascript:')
+            ) {
+                return;
+            }
+            if (
+                link.target === '_blank' ||
+                link.target === '_parent' ||
+                link.target === '_top'
+            ) {
+                return;
+            }
+            if (link.hasAttribute('download')) {
+                return;
+            }
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+                return;
+            }
+            try {
+                var url = new URL(href, window.location.href);
+                if (url.origin !== window.location.origin) {
+                    return;
+                }
+            } catch (ignore) {
+                return;
+            }
+
+            showLoader();
+        });
+    });
+
+    window.addEventListener('pageshow', function () {
+        resetGlobalOverlayAfterNavigation();
+    });
+
+    window.addEventListener('load', function () {
+        resetGlobalOverlayAfterNavigation();
+    });
+})();
 
 // Booking is handled by embedded Cal.com iframe (index.html #booking)
 const paymentSection = document.getElementById('payment');
@@ -115,6 +174,7 @@ if (paymentForm) {
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Processing...';
         submitBtn.disabled = true;
+        showLoader();
 
         try {
             // In production, this would call your payment gateway API
@@ -140,6 +200,7 @@ if (paymentForm) {
             alert('Payment processing failed. Please try again.');
             console.error('Payment error:', error);
         } finally {
+            hideLoader();
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
         }
@@ -313,19 +374,33 @@ async function sendConfirmationEmail(bookingData, zoomLink) {
 function showSuccessMessage() {
     const successMessage = document.getElementById('successMessage');
     if (successMessage) {
-        successMessage.style.display = 'flex';
+        successMessage.classList.add('active');
+        successMessage.setAttribute('aria-hidden', 'false');
     }
 }
 
+const successMessageEl = document.getElementById('successMessage');
 const closeSuccessBtn = document.getElementById('closeSuccess');
+function closeSuccessOverlay() {
+    if (successMessageEl) {
+        successMessageEl.classList.remove('active');
+        successMessageEl.setAttribute('aria-hidden', 'true');
+    }
+}
 if (closeSuccessBtn) {
     closeSuccessBtn.addEventListener('click', () => {
-        const successMessage = document.getElementById('successMessage');
-        if (successMessage) {
-            successMessage.style.display = 'none';
-        }
+        closeSuccessOverlay();
     });
 }
+if (successMessageEl) {
+    successMessageEl.addEventListener('click', (e) => {
+        if (e.target === successMessageEl) closeSuccessOverlay();
+    });
+}
+
+window.showLoader = showLoader;
+window.hideLoader = hideLoader;
+window.showUiModal = showUiModal;
 
 // Login Modal
 const loginModal = document.getElementById('loginModal');
@@ -417,50 +492,33 @@ function openLoginModal() {
         var loginEmailInput = document.getElementById('loginEmail');
         if (loginEmailInput) loginEmailInput.value = pendingEmail;
     }
-    if (loginModal) loginModal.style.display = 'block';
+    if (loginModal) loginModal.classList.add('active');
 }
+
 function closeLoginModal() {
     clearLoginError();
-    if (loginModal) loginModal.style.display = 'none';
+    if (loginModal) loginModal.classList.remove('active');
 }
 
 function closeSignupModal() {
-    if (signupModal) signupModal.style.display = 'none';
+    if (signupModal) signupModal.classList.remove('active');
 }
 
-/** Global auth info banner (any page that loads script.js) */
+function escapeHtml(text) {
+    var d = document.createElement('div');
+    d.textContent = text == null ? '' : String(text);
+    return d.innerHTML;
+}
+
+/** Global auth info — unified #ui-overlay-root + .ui-modal */
 function showAuthMessage(message) {
-    var el = document.getElementById('auth-message');
-
-    if (!el) {
-        el = document.createElement('div');
-        el.id = 'auth-message';
-        el.setAttribute('role', 'status');
-        el.setAttribute('aria-live', 'polite');
-        el.style.position = 'fixed';
-        el.style.top = '20px';
-        el.style.left = '50%';
-        el.style.transform = 'translateX(-50%)';
-        el.style.background = '#3b1406';
-        el.style.color = '#fff';
-        el.style.padding = '12px 18px';
-        el.style.borderRadius = '999px';
-        el.style.zIndex = '9999';
-        document.body.appendChild(el);
-    }
-
-    if (window.__authMessageTimer) {
-        clearTimeout(window.__authMessageTimer);
-    }
-
-    el.innerText = message;
-
-    window.__authMessageTimer = setTimeout(function () {
-        if (el && el.parentNode) {
-            el.remove();
-        }
-        window.__authMessageTimer = null;
-    }, 4000);
+    var html =
+        '<p id="auth-message-label">' +
+        escapeHtml(message) +
+        '</p><button type="button" class="ui-modal-dismiss">OK</button>';
+    showUiModal(html);
+    registerUiModalEscape();
+    scheduleUiModalAutoHide(5200);
 }
 
 function showAuthError(message) {
@@ -472,15 +530,15 @@ window.openLoginModal = openLoginModal;
 if (showSignup) {
     showSignup.addEventListener('click', (e) => {
         e.preventDefault();
-        if (loginModal) loginModal.style.display = 'none';
-        if (signupModal) signupModal.style.display = 'block';
+        if (loginModal) loginModal.classList.remove('active');
+        if (signupModal) signupModal.classList.add('active');
     });
 }
 
 if (showLogin) {
     showLogin.addEventListener('click', (e) => {
         e.preventDefault();
-        if (signupModal) signupModal.style.display = 'none';
+        if (signupModal) signupModal.classList.remove('active');
         openLoginModal();
     });
 }
@@ -490,9 +548,9 @@ document.querySelectorAll('.close-modal').forEach(closeBtn => {
     closeBtn.addEventListener('click', () => {
         if (loginModal) {
             clearLoginError();
-            loginModal.style.display = 'none';
+            loginModal.classList.remove('active');
         }
-        if (signupModal) signupModal.style.display = 'none';
+        if (signupModal) signupModal.classList.remove('active');
     });
 });
 
@@ -500,10 +558,10 @@ document.querySelectorAll('.close-modal').forEach(closeBtn => {
 window.addEventListener('click', (e) => {
     if (e.target === loginModal) {
         clearLoginError();
-        loginModal.style.display = 'none';
+        loginModal.classList.remove('active');
     }
     if (e.target === signupModal) {
-        signupModal.style.display = 'none';
+        signupModal.classList.remove('active');
     }
 });
 
@@ -587,6 +645,7 @@ if (loginForm) {
         if (!supabase) return;
 
         if (loginBtn) loginBtn.disabled = true;
+        showLoader();
         try {
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
@@ -613,6 +672,7 @@ if (loginForm) {
 
             closeLoginModal();
         } finally {
+            hideLoader();
             if (loginBtn) loginBtn.disabled = false;
         }
     });
@@ -705,6 +765,7 @@ if (signupForm) {
             return;
         }
 
+        showLoader();
         try {
             var signUpPayload = { email: email, password: password };
             signUpPayload.options = {
@@ -770,6 +831,8 @@ if (signupForm) {
         } catch (err) {
             console.error('Signup error:', err);
             showAuthError(err.message || 'Registration failed. Please try again.');
+        } finally {
+            hideLoader();
         }
     });
 }
