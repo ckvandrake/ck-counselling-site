@@ -3936,7 +3936,7 @@ textarea:focus {
   /* Navbar — mobile: block flow bar, brand centered on viewport, menu control on right */
   .navbar {
     position: relative;
-    padding: 16px;
+    padding: 16px 48px 16px 16px;
     box-sizing: border-box;
     min-height: 64px;
   }
@@ -3953,11 +3953,16 @@ textarea:focus {
     max-width: 100%;
   }
 
+  .navbar .logo,
+  .navbar .logo-text {
+    max-width: none;
+    width: auto;
+  }
+
   .navbar .logo {
     position: absolute;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -3965,41 +3970,46 @@ textarea:focus {
     margin: 0;
     pointer-events: none;
     box-sizing: border-box;
+    flex-shrink: 0;
   }
 
   .navbar .logo .logo-link {
     pointer-events: auto;
-    max-width: 100%;
+    max-width: none;
+    width: auto;
     justify-content: center;
+    flex-shrink: 0;
   }
 
   .navbar .logo-text {
-    font-size: clamp(18px, 5vw, 22px);
+    font-size: clamp(24px, 7vw, 30px);
     line-height: 1.1;
     display: flex;
     align-items: center;
-    gap: 4px;
-    max-width: 100%;
-    min-width: 0;
+    gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .navbar .logo-text .brand,
   .navbar .logo-text .descriptor {
     font-size: 1em;
     transform: none;
+    flex-shrink: 0;
   }
 
   .navbar .logo-text .brand {
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .navbar .logo-text .descriptor {
-    opacity: 0.8;
+    font-weight: 400;
+    opacity: 0.75;
   }
 
   .navbar .logo img,
   .navbar .logo svg {
-    height: 18px;
+    height: 20px;
     width: auto;
     flex-shrink: 0;
     display: block;
