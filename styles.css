@@ -165,8 +165,9 @@ h1, h2, h3, h4, h5, h6 {
 .nav-links a,
 .nav-menu .nav-link {
     text-decoration: none;
-    font-family: 'Inter', sans-serif;
-    font-size: 18.75px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.08rem;
+    line-height: 1.45;
     font-weight: 500;
     color: #5A1A32;
     transition: color 0.3s ease;
@@ -3930,8 +3931,8 @@ textarea:focus {
   /* Navbar — wordmark centered to viewport row, hamburger stays right */
   .navbar {
     position: relative;
-    padding-left: 16px;
-    padding-right: 16px;
+    padding: 18px 16px;
+    box-sizing: border-box;
   }
 
   .navbar .container {
@@ -3956,16 +3957,23 @@ textarea:focus {
     margin-left: 0;
     margin-right: 0;
     pointer-events: none;
+    max-width: min(calc(100vw - 72px), 320px);
+    box-sizing: border-box;
   }
 
   .navbar .logo .logo-link {
     pointer-events: auto;
+    max-width: 100%;
+    justify-content: center;
   }
 
-  /* Wordmark scale matches hero h1 on small screens */
+  /* Wordmark: between legacy shrink and full h1 scale — max legibility within bar + no overlap menu */
   .navbar .logo-text {
-    font-size: clamp(31px, 7.2vw, 38px);
-    line-height: 1.15;
+    font-size: clamp(20px, 2.65vw + 10px, 25px);
+    line-height: 1.08;
+    max-width: 100%;
+    min-width: 0;
+    gap: 0.32em;
   }
 
   .navbar .logo-text .brand,
@@ -3975,14 +3983,22 @@ textarea:focus {
   }
 
   .navbar .logo-divider {
-    height: 0.82em;
-    margin: 0 0.2em;
+    height: 0.88em;
+    margin: 0 0.14em;
+    flex-shrink: 0;
     transform: translateY(0.05em);
+  }
+
+  .nav-menu .nav-link,
+  .nav-links a {
+    font-size: clamp(16px, 4vw, 18px);
+    line-height: 1.45;
   }
 
   .mobile-menu-toggle {
     margin-left: auto;
     z-index: 2;
+    flex-shrink: 0;
   }
 
   .section-title {
