@@ -3933,11 +3933,18 @@ textarea:focus {
     max-width: min(1200px, 100%);
   }
 
-  /* Navbar — wordmark centered to viewport row, hamburger stays right */
+  /* Navbar — mobile: block flow bar, brand centered on viewport, menu control on right */
   .navbar {
     position: relative;
-    padding: 18px 16px;
+    padding: 16px;
     box-sizing: border-box;
+    min-height: 64px;
+  }
+
+  .navbar .container,
+  .nav-wrapper {
+    display: block;
+    position: relative;
   }
 
   .navbar .container {
@@ -3946,23 +3953,17 @@ textarea:focus {
     max-width: 100%;
   }
 
-  .nav-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-
   .navbar .logo {
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
     white-space: nowrap;
-    margin-left: 0;
-    margin-right: 0;
+    margin: 0;
     pointer-events: none;
-    max-width: min(calc(100vw - 72px), 320px);
     box-sizing: border-box;
   }
 
@@ -3972,13 +3973,14 @@ textarea:focus {
     justify-content: center;
   }
 
-  /* Wordmark: between legacy shrink and full h1 scale — max legibility within bar + no overlap menu */
   .navbar .logo-text {
-    font-size: clamp(20px, 2.65vw + 10px, 25px);
-    line-height: 1.08;
+    font-size: clamp(18px, 5vw, 22px);
+    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
     max-width: 100%;
     min-width: 0;
-    gap: 0.32em;
   }
 
   .navbar .logo-text .brand,
@@ -3987,11 +3989,21 @@ textarea:focus {
     transform: none;
   }
 
-  .navbar .logo-divider {
-    height: 0.88em;
-    margin: 0 0.14em;
+  .navbar .logo-text .brand {
+    font-weight: 500;
+  }
+
+  .navbar .logo-text .descriptor {
+    opacity: 0.8;
+  }
+
+  .navbar .logo img,
+  .navbar .logo svg {
+    height: 18px;
+    width: auto;
     flex-shrink: 0;
-    transform: translateY(0.05em);
+    display: block;
+    object-fit: contain;
   }
 
   .nav-menu .nav-link,
@@ -4001,9 +4013,21 @@ textarea:focus {
   }
 
   .mobile-menu-toggle {
+    position: relative;
     margin-left: auto;
-    z-index: 2;
+    margin-right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    z-index: 3;
     flex-shrink: 0;
+  }
+
+  .mobile-menu-toggle svg {
+    width: 22px;
+    height: 22px;
   }
 
   .section-title {
