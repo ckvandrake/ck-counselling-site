@@ -1119,6 +1119,19 @@ if (expiryInput) {
     });
 }
 
+/** About page: mobile-only progressive disclosure (CSS gates visuals; JS works on all widths harmlessly) */
+document.querySelectorAll('.about-page .expand-toggle').forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+        const content = toggle.previousElementSibling;
+        if (!content || !content.classList.contains('collapsible-content')) {
+            return;
+        }
+        const expanded = content.classList.toggle('expanded');
+        toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        toggle.textContent = expanded ? 'Show less ↑' : 'Read more ↓';
+    });
+});
+
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {

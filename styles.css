@@ -2215,6 +2215,11 @@ textarea:focus {
   background-color: #f7f4f1;
 }
 
+/* Progressive disclosure toggle: mobile only (see ≤768px rules) */
+.about-page .expand-toggle {
+  display: none;
+}
+
 .about-page .about-qualities,
 .about-page .about-roots,
 .about-page .about-invite {
@@ -2370,7 +2375,7 @@ textarea:focus {
   color: rgba(0, 0, 0, 0.8);
 }
 
-.about-page .about-invite > .container.narrow > p {
+.about-page .about-invite .collapsible-content p {
   font-size: 1rem;
   line-height: 1.65;
   max-width: 580px;
@@ -4233,8 +4238,77 @@ textarea:focus {
     font-size: clamp(16px, 3.85vw, 17px);
   }
 
-  .about-page .about-invite > .container.narrow > p {
+  .about-page .about-invite .collapsible-content p {
     font-size: clamp(16px, 3.85vw, 17px);
+  }
+
+  /* About page: progressive disclosure (mobile only) */
+  .about-page .expand-toggle {
+    display: block;
+    font-size: 13px;
+    line-height: 1.35;
+    opacity: 0.6;
+    margin-top: 8px;
+    margin-bottom: 0;
+    cursor: pointer;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: rgba(39, 18, 9, 0.75);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .about-page .expand-toggle:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 3px;
+    opacity: 0.9;
+  }
+
+  .about-page .collapsible-content {
+    max-height: 80px;
+    overflow: hidden;
+    position: relative;
+    transition: max-height 0.25s ease, opacity 0.2s ease;
+  }
+
+  .about-page .collapsible-content::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(247, 244, 241, 0), #f7f4f1);
+    pointer-events: none;
+  }
+
+  .about-page .reflections .collapsible-content::after,
+  .about-page .about-training .collapsible-content::after {
+    background: linear-gradient(to bottom, rgba(241, 236, 232, 0), #f1ece8);
+  }
+
+  .about-page .collapsible-content.expanded {
+    max-height: 1000px;
+  }
+
+  .about-page .collapsible-content.expanded::after {
+    display: none;
+  }
+
+  .about-page .about-invite .expand-toggle {
+    text-align: center;
+    max-width: 580px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .about-page .reflections .expand-toggle {
+    text-align: center;
   }
 
   .reset-room-page .reset-room-hero h1 {
