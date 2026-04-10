@@ -3933,18 +3933,11 @@ textarea:focus {
     max-width: min(1200px, 100%);
   }
 
-  /* Navbar — mobile: block flow bar, brand centered on viewport, menu control on right */
+  /* Navbar — wordmark centered to viewport row, hamburger stays right */
   .navbar {
     position: relative;
-    padding: 16px 48px 16px 16px;
+    padding: 18px 16px;
     box-sizing: border-box;
-    min-height: 64px;
-  }
-
-  .navbar .container,
-  .nav-wrapper {
-    display: block;
-    position: relative;
   }
 
   .navbar .container {
@@ -3953,67 +3946,52 @@ textarea:focus {
     max-width: 100%;
   }
 
-  .navbar .logo,
-  .navbar .logo-text {
-    max-width: none;
-    width: auto;
+  .nav-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
   }
 
   .navbar .logo {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    text-align: center;
     white-space: nowrap;
-    margin: 0;
+    margin-left: 0;
+    margin-right: 0;
     pointer-events: none;
+    max-width: min(calc(100vw - 72px), 320px);
     box-sizing: border-box;
-    flex-shrink: 0;
   }
 
   .navbar .logo .logo-link {
     pointer-events: auto;
-    max-width: none;
-    width: auto;
+    max-width: 100%;
     justify-content: center;
-    flex-shrink: 0;
   }
 
+  /* Wordmark: between legacy shrink and full h1 scale — max legibility within bar + no overlap menu */
   .navbar .logo-text {
-    font-size: clamp(24px, 7vw, 30px);
-    line-height: 1.1;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-    flex-shrink: 0;
+    font-size: clamp(20px, 2.65vw + 10px, 25px);
+    line-height: 1.08;
+    max-width: 100%;
+    min-width: 0;
+    gap: 0.32em;
   }
 
   .navbar .logo-text .brand,
   .navbar .logo-text .descriptor {
     font-size: 1em;
     transform: none;
+  }
+
+  .navbar .logo-divider {
+    height: 0.88em;
+    margin: 0 0.14em;
     flex-shrink: 0;
-  }
-
-  .navbar .logo-text .brand {
-    font-weight: 600;
-  }
-
-  .navbar .logo-text .descriptor {
-    font-weight: 400;
-    opacity: 0.75;
-  }
-
-  .navbar .logo img,
-  .navbar .logo svg {
-    height: 20px;
-    width: auto;
-    flex-shrink: 0;
-    display: block;
-    object-fit: contain;
+    transform: translateY(0.05em);
   }
 
   .nav-menu .nav-link,
@@ -4023,21 +4001,9 @@ textarea:focus {
   }
 
   .mobile-menu-toggle {
-    position: relative;
     margin-left: auto;
-    margin-right: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    z-index: 3;
+    z-index: 2;
     flex-shrink: 0;
-  }
-
-  .mobile-menu-toggle svg {
-    width: 22px;
-    height: 22px;
   }
 
   .section-title {
