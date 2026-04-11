@@ -28,14 +28,6 @@ async function syncSessionOnLoad() {
 
 syncSessionOnLoad();
 
-function escapeHtml(text) {
-  return String(text)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 /** First name for personalised booking copy; calm fallback if unknown. */
 function getBookingFirstName(user) {
   if (!user) return "there";
@@ -59,6 +51,178 @@ function getBookingFirstName(user) {
   return "there";
 }
 
+/**
+ * Booking / credit banner state (session durations: min 30m blocks, 120m = healthy band).
+ * new_user takes precedence; otherwise credit tiers match 30 / 120 minute thresholds.
+ */
+function resolveUserBookingState(profile) {
+  const credits = profile.credits_minutes || 0;
+  const stage = profile.user_stage || "new";
+
+  if (stage === "new") {
+    return "new_user";
+  }
+
+  if (credits < 30) {
+    return "no_credits";
+  }
+
+  if (credits >= 30 && credits < 120) {
+    return "medium_credits";
+  }
+
+  if (credits >= 120) {
+    return "high_credits";
+  }
+
+  return "medium_credits";
+}
+
+/** Prefer full display name so getBookingMessage can take the first word; fallback to first-name helper. */
+function getBookingDisplayName(user) {
+  if (!user) return "";
+  const meta = user.user_metadata || {};
+  const full = (meta.full_name || meta.name || "").trim();
+  if (full) return full;
+  return getBookingFirstName(user);
+}
+
+function getBookingMessage(state, name, credits) {
+  const firstName = name ? name.split(" ")[0] : '';
+
+  switch (state) {
+    case "new_user":
+      return {
+        text: `Welcome ${firstName}\n\nYou’re free to book your first session — we’ll take care of the payment details together when we meet.`,
+        cta: null,
+        tone: "warm",
+      };
+
+    case "no_credits":
+      return {
+        text: `Hey ${firstName}, you don’t currently have enough session time for a full session.\n\nYou’re still welcome to book — just make sure to top up your credits before we meet.`,
+        cta: {
+          label: "Purchase Credits",
+          action: "credits_page",
+        },
+        tone: "boundary",
+      };
+
+    case "medium_credits":
+      return {
+        text: `Hey ${firstName}, your available session time is ${credits} minutes.\n\nYou’re welcome to book — just keep an eye on your remaining time.`,
+        cta: {
+          label: "Top Up Credits",
+          action: "credits_page",
+        },
+        tone: "neutral",
+      };
+
+    case "high_credits":
+      return {
+        text: `Hey ${firstName}, your available session time is ${credits} minutes.\n\nYou’re well covered.`,
+        cta: null,
+        tone: "positive",
+      };
+
+    default:
+      return {
+        text: `Hey ${firstName}, your available session time is ${credits} minutes.\n\nYou’re well covered.`,
+        cta: null,
+        tone: "positive",
+      };
+  }
+}
+
+/** Prefer `profiles.full_name`; otherwise auth metadata / email heuristic (same as booking copy). */
+function displayNameForBanner(profile, user) {
+  if (profile && profile.full_name && String(profile.full_name).trim()) {
+    return String(profile.full_name).trim();
+  }
+  return getBookingDisplayName(user);
+}
+
+function updateBannerUI(message, state) {
+  const banner = document.getElementById("booking-banner");
+  const textEl = banner && banner.querySelector(".message-text");
+  const buttonEl = banner && banner.querySelector(".cta-button");
+
+  if (!banner || !textEl || !buttonEl) return;
+
+  textEl.innerText = message.text;
+
+  if (message.cta) {
+    buttonEl.style.display = "inline-block";
+    buttonEl.innerText = message.cta.label;
+    buttonEl.onclick = function () {
+      if (message.cta.action === "credits_page") {
+        window.location.href = "pricing-online.html";
+      }
+    };
+  } else {
+    buttonEl.style.display = "none";
+    buttonEl.innerText = "";
+    buttonEl.onclick = null;
+  }
+
+  banner.classList.remove("warm", "boundary", "neutral", "positive", "credit-pulse");
+  banner.classList.add(message.tone);
+
+  // KEY UX DECISION: No blocking, no gating, no disabling iframe — ever
+
+  if (message.tone === "boundary") {
+    if (!window.__creditPulseInterval) {
+      const triggerCreditPulse = () => {
+        const b = document.getElementById("booking-banner");
+        if (!b) return;
+        b.classList.remove("credit-pulse");
+        setTimeout(() => {
+          b.classList.add("credit-pulse");
+        }, 50);
+      };
+      triggerCreditPulse();
+      window.__creditPulseInterval = setInterval(triggerCreditPulse, 8000);
+    }
+  } else if (window.__creditPulseInterval) {
+    clearInterval(window.__creditPulseInterval);
+    window.__creditPulseInterval = null;
+  }
+}
+
+async function renderBookingBanner(user) {
+  const supabase = window.supabaseClient;
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (error || !profile) {
+    console.error("Failed to load profile", error);
+    const fallback = {
+      credits_minutes: 0,
+      user_stage: "returning",
+      full_name: null,
+    };
+    const state = resolveUserBookingState(fallback);
+    const message = getBookingMessage(
+      state,
+      displayNameForBanner(fallback, user),
+      0
+    );
+    updateBannerUI(message, state);
+    return;
+  }
+
+  const state = resolveUserBookingState(profile);
+  const nameForMessage = displayNameForBanner(profile, user);
+  const credits =
+    typeof profile.credits_minutes === "number" ? profile.credits_minutes : 0;
+  const message = getBookingMessage(state, nameForMessage, credits);
+
+  updateBannerUI(message, state);
+}
+
 async function updateBookingAccess() {
   const { data: { user } } = await window.supabaseClient.auth.getUser();
 
@@ -77,91 +241,18 @@ async function updateBookingAccess() {
     if (lockedText) lockedText.innerText = "Please log in or sign up to book a session.";
     return;
   }
-  
-  // 🔥 Fetch credits from Supabase to update banner only (does not block booking)
-  let minutes = 0;
-  const { data, error } = await window.supabaseClient
-    .from("profiles")
-    .select("credits_minutes")
-    .eq("id", user.id)
-    .single();
-  
-  if (error) {
-    console.error("Error fetching credits:", error);
-  } else if (data && typeof data.credits_minutes === "number") {
-    minutes = data.credits_minutes;
-  }
 
-  // 👉 Update credit banner appearance based on remaining minutes
-  const banner = document.getElementById("credit-banner");
-  const messageEl = document.getElementById("credit-message");
-  const actionEl = document.getElementById("credit-action");
-
-  if (banner) {
-    banner.classList.remove("credit-normal","credit-warning","credit-critical","credit-pulse");
-    if (actionEl) {
-      actionEl.innerHTML = "";
-    }
-
-    var firstName = escapeHtml(getBookingFirstName(user));
-    var line1 =
-      "Hey " + firstName + ", your available session time is " + minutes + " minutes.";
-    var line2;
-
-    if (minutes < 30) {
-      banner.classList.add("credit-critical");
-      line2 = "You will need additional credits soon.";
-      if (messageEl) {
-        messageEl.innerHTML = line1 + "<br>" + line2;
-      }
-      if (actionEl) {
-        actionEl.innerHTML =
-          '<a href="pricing-online.html" class="credit-btn">Purchase Credits</a>';
-      }
-      // Trigger gentle pulse every ~8 seconds
-      if (!window.__creditPulseInterval) {
-        const triggerCreditPulse = () => {
-          const b = document.getElementById("credit-banner");
-          if (!b) return;
-          b.classList.remove("credit-pulse");
-          setTimeout(() => {
-            b.classList.add("credit-pulse");
-          }, 50);
-        };
-        triggerCreditPulse();
-        window.__creditPulseInterval = setInterval(triggerCreditPulse, 8000);
-      }
-    } else if (minutes < 120) {
-      banner.classList.add("credit-warning");
-      line2 = "You're in a good range — just keep an eye on your usage.";
-      if (messageEl) {
-        messageEl.innerHTML = line1 + "<br>" + line2;
-      }
-      if (actionEl) {
-        actionEl.innerHTML =
-          '<a href="pricing-online.html" class="credit-btn-secondary">Top Up Credits</a>';
-      }
-      if (window.__creditPulseInterval) {
-        clearInterval(window.__creditPulseInterval);
-        window.__creditPulseInterval = null;
-      }
-    } else {
-      banner.classList.add("credit-normal");
-      line2 = "You're well covered!";
-      if (messageEl) {
-        messageEl.innerHTML = line1 + "<br>" + line2;
-      }
-      if (window.__creditPulseInterval) {
-        clearInterval(window.__creditPulseInterval);
-        window.__creditPulseInterval = null;
-      }
-    }
-  }
+  await renderBookingBanner(user);
 
   // 👉 If user is logged in, always show calendar (no credit barrier)
   unlocked.style.display = "block";
   locked.style.display = "none";
 }
+
+window.resolveUserBookingState = resolveUserBookingState;
+window.getBookingMessage = getBookingMessage;
+window.renderBookingBanner = renderBookingBanner;
+window.updateBannerUI = updateBannerUI;
 
 window.supabaseClient.auth.onAuthStateChange((event, session) => {
   syncSessionToLocalStorage(session);

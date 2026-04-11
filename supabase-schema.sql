@@ -13,6 +13,12 @@ create table if not exists public.profiles (
 
 alter table public.profiles add column if not exists marketing_opt_in boolean not null default false;
 
+-- Booking UX: 'new' = first-time onboarding copy; anything else uses credit bands only.
+alter table public.profiles add column if not exists user_stage text default 'returning';
+
+-- Optional display name for booking banner copy (falls back to auth metadata in client if null).
+alter table public.profiles add column if not exists full_name text;
+
 -- Sync new auth users into profiles (including marketing_opt_in from signUp metadata when client has no session).
 create or replace function public.handle_new_user()
 returns trigger

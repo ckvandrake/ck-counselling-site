@@ -31,16 +31,27 @@ function getCreditFirstName(user) {
     return 'there';
 }
 
-/** Two lines; wording aligned with book-a-session credit banner (line 2 exact match). */
-function renderSessionCreditsCopy(user, minutes) {
+/** Two lines; aligned with booking banner via resolveUserBookingState (supabaseClient). */
+function renderSessionCreditsCopy(user, minutes, profileForState) {
     var el = document.getElementById('credit-explanation');
     if (!el) return;
     var first = escapeHtmlCredit(getCreditFirstName(user));
     var line1 = 'Hey ' + first + ', you have ' + minutes + ' minutes remaining.';
     var line2;
-    if (minutes < 30) {
+    var profile = profileForState || { credits_minutes: minutes, user_stage: 'returning' };
+    var state =
+        typeof window.resolveUserBookingState === 'function'
+            ? window.resolveUserBookingState(profile)
+            : minutes < 30
+              ? 'no_credits'
+              : minutes < 120
+                ? 'medium_credits'
+                : 'high_credits';
+    if (state === 'new_user') {
+        line2 = "Welcome — book when you're ready, and add credits anytime.";
+    } else if (state === 'no_credits') {
         line2 = 'You will need additional credits soon.';
-    } else if (minutes < 120) {
+    } else if (state === 'medium_credits') {
         line2 = "You're in a good range — just keep an eye on your usage.";
     } else {
         line2 = "You're well covered!";
@@ -73,7 +84,7 @@ async function loadCredits(user) {
     try {
         var supabase = window.supabaseClient;
         if (!supabase) return;
-        // Prefer credits table (minutes_available). Fallback to profiles.credits_minutes.
+        // Prefer credits table (minutes_available). Fallback: profiles.credits_minutes. Always read user_stage from profiles.
         var minutes = null;
         try {
             var creditsResult = await supabase
@@ -85,17 +96,34 @@ async function loadCredits(user) {
                 minutes = creditsResult.data.minutes_available;
             }
         } catch (e) {}
-        if (minutes === null) {
+
+        var profileForState = { credits_minutes: 0, user_stage: 'returning' };
+        try {
             var profileResult = await supabase
                 .from('profiles')
-                .select('credits_minutes')
+                .select('credits_minutes, user_stage')
                 .eq('id', user.id)
                 .single();
-            if (profileResult.data && typeof profileResult.data.credits_minutes === 'number') {
-                minutes = profileResult.data.credits_minutes;
+            if (profileResult.data) {
+                if (profileResult.data.user_stage != null) {
+                    profileForState.user_stage = profileResult.data.user_stage;
+                }
+                if (minutes === null && typeof profileResult.data.credits_minutes === 'number') {
+                    minutes = profileResult.data.credits_minutes;
+                }
             }
-        }
+        } catch (e) {}
         if (minutes === null) minutes = 0;
+        profileForState.credits_minutes = minutes;
+
+        var bookingState =
+            typeof window.resolveUserBookingState === 'function'
+                ? window.resolveUserBookingState(profileForState)
+                : minutes < 30
+                  ? 'no_credits'
+                  : minutes < 120
+                    ? 'medium_credits'
+                    : 'high_credits';
 
         var creditsCard = document.getElementById('session-credits-card');
         if (creditsCard) {
@@ -104,9 +132,9 @@ async function loadCredits(user) {
                 'session-credits--medium',
                 'session-credits--high'
             );
-            if (minutes < 30) {
+            if (bookingState === 'no_credits') {
                 creditsCard.classList.add('session-credits--low');
-            } else if (minutes < 120) {
+            } else if (bookingState === 'medium_credits' || bookingState === 'new_user') {
                 creditsCard.classList.add('session-credits--medium');
             } else {
                 creditsCard.classList.add('session-credits--high');
@@ -131,22 +159,28 @@ async function loadCredits(user) {
             }
         }
 
-        renderSessionCreditsCopy(user, minutes);
+        renderSessionCreditsCopy(user, minutes, profileForState);
 
         var cta = document.getElementById('credit-cta');
         if (cta) {
-            if (minutes >= 120) {
+            if (bookingState === 'high_credits') {
                 cta.style.display = 'none';
                 cta.setAttribute('aria-hidden', 'true');
             } else {
                 cta.style.display = '';
                 cta.removeAttribute('aria-hidden');
-                if (minutes < 30) {
+                if (bookingState === 'new_user') {
+                    cta.className = 'credit-cta--topup';
+                    cta.textContent = 'View pricing';
+                    cta.href = 'pricing-online.html';
+                } else if (bookingState === 'no_credits') {
                     cta.className = 'primary-btn';
                     cta.textContent = 'Purchase credits';
+                    cta.href = 'work-with-me.html';
                 } else {
                     cta.className = 'credit-cta--topup';
                     cta.textContent = 'Top up credits';
+                    cta.href = 'work-with-me.html';
                 }
             }
         }

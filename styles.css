@@ -1984,7 +1984,8 @@ textarea:focus {
     background-color: rgba(255, 255, 255, 0.45);
   }
 
-  #credit-message {
+  #credit-message,
+  .message-text {
     display: block;
     max-width: min(32em, 100%);
     margin: 0 auto;
@@ -1994,11 +1995,52 @@ textarea:focus {
     font-size: 1.08rem;
     font-weight: 500;
     line-height: 1.45;
+    white-space: pre-line;
+  }
+
+  .cta-button {
+    margin: 0;
+    padding: 12px 24px;
+    background: #3a7d73;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.08rem;
+    line-height: 1.45;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .cta-button:hover {
+    background: #271209;
+    box-shadow: 0 6px 16px rgba(39, 18, 9, 0.18);
   }
 
   #credit-icon svg {
     width: 22px;
     height: 22px;
+  }
+
+  .banner.warm {
+    background-color: #f4f1ed;
+    border: 1px solid #e8e2db;
+  }
+
+  .banner.boundary {
+    background-color: #f8edeb;
+    border: 1px solid #e6cfcb;
+  }
+
+  .banner.neutral {
+    background-color: #f6f3ee;
+    border: 1px solid #e5ded6;
+  }
+
+  .banner.positive {
+    background-color: #f1f5f4;
+    border: 1px solid #d6e3e1;
   }
 
   .credit-normal {
@@ -2375,7 +2417,7 @@ textarea:focus {
   color: rgba(0, 0, 0, 0.8);
 }
 
-.about-page .about-invite .collapsible-content p {
+.about-page .about-invite > .container.narrow > p {
   font-size: 1rem;
   line-height: 1.65;
   max-width: 580px;
@@ -4187,13 +4229,15 @@ textarea:focus {
     font-weight: 400;
   }
 
-  .booking .credit-banner #credit-message {
+  .booking .credit-banner #credit-message,
+  .booking .credit-banner .message-text {
     font-size: clamp(16px, 3.9vw, 17px);
     font-weight: 400;
     line-height: 1.45;
   }
 
-  .credit-btn {
+  .credit-btn,
+  .cta-button {
     font-size: clamp(16px, 4vw, 18px);
   }
 
@@ -4238,7 +4282,7 @@ textarea:focus {
     font-size: clamp(16px, 3.85vw, 17px);
   }
 
-  .about-page .about-invite .collapsible-content p {
+  .about-page .about-invite > .container.narrow > p {
     font-size: clamp(16px, 3.85vw, 17px);
   }
 
@@ -4298,13 +4342,6 @@ textarea:focus {
 
   .about-page .collapsible-content.expanded::after {
     display: none;
-  }
-
-  .about-page .about-invite .expand-toggle {
-    text-align: center;
-    max-width: 580px;
-    margin-left: auto;
-    margin-right: auto;
   }
 
   .about-page .reflections .expand-toggle {
