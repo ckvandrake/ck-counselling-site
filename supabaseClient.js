@@ -100,7 +100,7 @@ function getBookingMessage(state, name, credits) {
 
     case "no_credits":
       return {
-        text: `Hey ${firstName}, you don’t currently have enough session time for a full session.\n\nYou’re still welcome to book — just make sure to top up your credits before we meet.`,
+        text: `Hey ${firstName}, you currently have ${credits} minutes of session time, which is not enough for a full session.\n\nYou’re still welcome to book — just make sure to top up your credits before we meet.`,
         cta: {
           label: "Purchase Credits",
           action: "credits_page",
