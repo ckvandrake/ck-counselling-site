@@ -36,7 +36,11 @@ function renderSessionCreditsCopy(user, minutes, profileForState) {
     var el = document.getElementById('credit-explanation');
     if (!el) return;
     var first = escapeHtmlCredit(getCreditFirstName(user));
-    var line1 = 'Hey ' + first + ', you have ' + minutes + ' minutes remaining.';
+    var formatted =
+        typeof window.formatSessionTime === 'function'
+            ? window.formatSessionTime(minutes)
+            : String(minutes) + ' minutes';
+    var line1 = 'Hey ' + first + ', you have ' + formatted + ' remaining.';
     var line2;
     var profile = profileForState || { credits_minutes: minutes, user_stage: 'returning' };
     var state =
@@ -142,7 +146,12 @@ async function loadCredits(user) {
         }
 
         var numberEl = document.getElementById('credit-number');
-        if (numberEl) numberEl.innerText = String(minutes);
+        if (numberEl) {
+            numberEl.innerText =
+                typeof window.formatSessionTime === 'function'
+                    ? window.formatSessionTime(minutes)
+                    : String(minutes);
+        }
 
         var bar = document.getElementById('credit-bar-fill');
         var maxCredits = 240;

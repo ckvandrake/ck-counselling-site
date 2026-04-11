@@ -28,6 +28,20 @@ async function syncSessionOnLoad() {
 
 syncSessionOnLoad();
 
+function formatSessionTime(minutes) {
+  if (!minutes || minutes <= 0) return "0 minutes";
+
+  if (minutes < 60) {
+    return minutes === 1 ? "1 minute" : `${minutes} minutes`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  const paddedMinutes = remainingMinutes.toString().padStart(2, "0");
+
+  return `${hours}:${paddedMinutes}`;
+}
+
 /** First name for personalised booking copy; calm fallback if unknown. */
 function getBookingFirstName(user) {
   if (!user) return "there";
@@ -88,7 +102,10 @@ function getBookingDisplayName(user) {
 }
 
 function getBookingMessage(state, name, credits) {
-  const firstName = name ? name.split(" ")[0] : '';
+  const firstName = name ? name.split(" ")[0] : "";
+  const rawMinutes =
+    typeof credits === "number" ? credits : Number(credits) || 0;
+  const formattedTime = formatSessionTime(rawMinutes);
 
   switch (state) {
     case "new_user":
@@ -98,19 +115,23 @@ function getBookingMessage(state, name, credits) {
         tone: "warm",
       };
 
-    case "no_credits":
+    case "no_credits": {
+      const creditText =
+        rawMinutes === 0 ? "no session time" : formattedTime;
+
       return {
-        text: `Hey ${firstName}, you currently have ${credits} minutes of session time, which is not enough for a full session.\n\nYou’re still welcome to book — just make sure to top up your credits before we meet.`,
+        text: `Hey ${firstName}, you currently have ${creditText}, which is not enough time for a full session.\n\nYou’re still very welcome to book — just make sure to top up your credits before we meet.`,
         cta: {
           label: "Purchase Credits",
           action: "credits_page",
         },
         tone: "boundary",
       };
+    }
 
     case "medium_credits":
       return {
-        text: `Hey ${firstName}, your available session time is ${credits} minutes.\n\nYou’re welcome to book — just keep an eye on your remaining time.`,
+        text: `Hey ${firstName}, your available session time is ${formattedTime}.\n\nYou’re good to book — just keep an eye on your remaining time.`,
         cta: {
           label: "Top Up Credits",
           action: "credits_page",
@@ -120,14 +141,14 @@ function getBookingMessage(state, name, credits) {
 
     case "high_credits":
       return {
-        text: `Hey ${firstName}, your available session time is ${credits} minutes.\n\nYou’re well covered.`,
+        text: `Hey ${firstName}, your available session time is ${formattedTime}.\n\nYou’re well covered.`,
         cta: null,
         tone: "positive",
       };
 
     default:
       return {
-        text: `Hey ${firstName}, your available session time is ${credits} minutes.\n\nYou’re well covered.`,
+        text: `Hey ${firstName}, your available session time is ${formattedTime}.\n\nYou’re well covered.`,
         cta: null,
         tone: "positive",
       };
@@ -251,6 +272,7 @@ async function updateBookingAccess() {
 
 window.resolveUserBookingState = resolveUserBookingState;
 window.getBookingMessage = getBookingMessage;
+window.formatSessionTime = formatSessionTime;
 window.renderBookingBanner = renderBookingBanner;
 window.updateBannerUI = updateBannerUI;
 
