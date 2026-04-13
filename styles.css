@@ -7,12 +7,16 @@
     box-sizing: border-box;
 }
 
+/* =========================================
+   GLOBAL SCALE SYSTEM (8px baseline)
+   ========================================= */
+
 :root {
-    --primary-color: #539FA2;
-    --secondary-color: #E2BBAB;
+    --primary-color: #539fa2;
+    --secondary-color: #e2bbab;
     /* Refined accent (replaces burnt orange for nav & non-warning UI) */
-    --burnt-orange: #7A1E3A;
-    --accent-burgundy-hover: #5A1A32;
+    --burnt-orange: #7a1e3a;
+    --accent-burgundy-hover: #5a1a32;
     --text-color: #271209;
     --white: #ffffff;
     --light-bg: #faf8f6;
@@ -20,14 +24,38 @@
     --warm-accent: #d4c4b8;
     /* Editorial measure & rhythm (premium, consistent copy blocks) */
     --text-measure: 36rem;
-    --lh-body: 1.38;
+    --lh-body: 1.55;
     --lh-paragraph: 1.44;
     --heading-tracking: -0.028em;
+
+    /* 8px spacing scale */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 40px;
+    --space-8: 48px;
+    --space-9: 64px;
+
+    /* Typography scale (reduced ~20%) */
+    --text-xs: 0.7rem;
+    --text-sm: 0.85rem;
+    --text-base: 0.95rem;
+    --text-md: 1.1rem;
+    --text-lg: 1.4rem;
+    --text-xl: 1.8rem;
+    --text-2xl: 2.2rem;
+    --text-3xl: 2.8rem;
+
+    /* Layout */
+    --container-width: 1100px;
 }
 
 html {
     scroll-behavior: smooth;
-    font-size: 125%;
+    font-size: 112.5%;
 }
 
 body {
@@ -41,6 +69,7 @@ body {
 
 p {
     line-height: var(--lh-paragraph);
+    font-size: var(--text-base);
 }
 
 /* All headings should be bold */
@@ -50,10 +79,22 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: var(--heading-tracking);
 }
 
+h1 {
+    font-size: var(--text-3xl);
+}
+
+h2 {
+    font-size: var(--text-2xl);
+}
+
+h3 {
+    font-size: var(--text-xl);
+}
+
 .container {
-    max-width: 1200px;
+    max-width: var(--container-width);
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 var(--space-4);
 }
 
 /* Navigation */
@@ -64,7 +105,7 @@ h1, h2, h3, h4, h5, h6 {
     position: sticky;
     top: 0;
     z-index: 1000;
-    padding: 18px 0;
+    padding: 12px 0;
 }
 
 .nav-wrapper {
@@ -425,7 +466,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 60px;
+    font-size: 2.6rem;
     line-height: 1.12;
     letter-spacing: -0.035em;
     color: #2E1C16;
@@ -436,7 +477,7 @@ h1, h2, h3, h4, h5, h6 {
 .hero p,
 .hero-text p {
     font-family: 'Manrope', sans-serif;
-    font-size: 26px;
+    font-size: var(--text-md);
     line-height: 1.48;
     color: #6B5A54;
     margin-top: 18px;
@@ -462,9 +503,9 @@ h1, h2, h3, h4, h5, h6 {
 .hero .btn-secondary {
     display: inline-block;
     font-family: 'Manrope', sans-serif;
-    font-size: 26px;
+    font-size: var(--text-md);
     line-height: 1.48;
-    padding: 24px 42px;
+    padding: 12px 22px;
     font-weight: 500;
     border-radius: 10px;
     text-decoration: none;
@@ -521,14 +562,14 @@ h1, h2, h3, h4, h5, h6 {
 /* Buttons */
 .btn {
     display: inline-block;
-    padding: 1rem 2.5rem;
+    padding: 10px 18px;
     border-radius: 50px;
     text-decoration: none;
     font-weight: 200;
     transition: all 0.3s ease;
     border: none;
     cursor: pointer;
-    font-size: 1.08rem;
+    font-size: var(--text-sm);
     line-height: 1.45;
     text-align: center;
     font-family: 'Manrope', sans-serif;
@@ -559,8 +600,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary,
 .btn-secondary {
-    padding: 14px 22px;
+    padding: 10px 18px;
     font-weight: 500;
+    font-size: var(--text-sm);
 }
 
 .btn-full {
@@ -600,13 +642,13 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Section Styles */
 section {
-    padding: 5rem 0;
+    padding: var(--space-8) 0;
 }
 
 .section-title {
     font-size: 2.75rem;
     text-align: center;
-    margin-bottom: 3.5rem;
+    margin-bottom: var(--space-6);
     color: var(--text-color);
     font-weight: 700;
     letter-spacing: var(--heading-tracking);
@@ -618,10 +660,11 @@ section {
     background-color: var(--white);
 }
 
-.services-layout {
+.services-layout,
+.services-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 4rem;
+    gap: var(--space-7);
     max-width: 1000px;
     margin: 0 auto;
 }
@@ -629,7 +672,7 @@ section {
 .services-column {
     display: flex;
     flex-direction: column;
-    gap: 4rem;
+    gap: var(--space-7);
 }
 
 .service-item {
@@ -816,32 +859,44 @@ section {
     opacity: 0.88;
 }
 
-.pricing-grid {
+.pricing-grid,
+.pricing-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 3rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
     max-width: 1000px;
     margin: 2rem auto 0 auto;
+    justify-items: center;
 }
 
 .work-with-me-page .pricing .pricing-grid {
     margin-top: 0;
 }
 
-.pricing-card {
+/* pricing-online.html: two rows × three columns */
+.pricing-grid--online {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.pricing-card,
+.card,
+.booking-card {
     background-color: var(--white);
-    padding: 3rem 2.5rem;
-    border-radius: 25px;
-    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    padding: var(--space-5);
+    border-radius: 16px;
+    box-shadow: none;
     text-align: center;
     position: relative;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 2px solid var(--warm-accent);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    max-width: 340px;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
 .pricing-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
 /* Softer treatment for secondary pathway (e.g. Reset Room on work-with-me) */
@@ -873,10 +928,36 @@ section {
 }
 
 .pricing-card.featured {
-    border: 3px solid #7A1E3A;
+    border: 1.5px solid #7a1e3a;
     background-color: var(--warm-bg);
-    transform: scale(1.04);
+    transform: none;
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Premium 12-hour card */
+.pricing-card.premium {
+    border: 1.5px solid rgba(0, 0, 0, 0.08);
+    background: #fdfcfa;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+}
+
+.pricing-card.premium h3 {
+    font-size: var(--text-lg);
+}
+
+.pricing-card.premium .price {
+    font-size: var(--text-2xl);
+}
+
+.pricing-card.premium .price-sub {
+    font-size: var(--text-sm);
+    opacity: 0.7;
+}
+
+.pricing-card.premium .pricing-highlight {
+    font-size: var(--text-sm);
+    margin: var(--space-3) 0;
 }
 
 .badge {
@@ -894,23 +975,48 @@ section {
     font-weight: 600;
 }
 
+/* Refined “Most Popular” on pricing featured cards */
+.badge.most-popular-badge {
+    font-size: 0.7rem;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background-color: rgba(128, 32, 52, 0.9);
+    color: #ffffff;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+    top: -10px;
+    text-transform: none;
+}
+
+.pricing-card h2,
 .pricing-card h3 {
-    font-size: 1.65rem;
-    margin-bottom: 1rem;
+    font-size: 1.6rem;
+    margin-bottom: 6px;
     color: var(--text-color);
     font-weight: 700;
 }
 
-.price {
-    font-size: 3.25rem;
+.pricing-card .price {
+    font-size: 2.2rem;
     font-weight: 700;
     color: var(--primary-color);
-    margin-bottom: 0.5rem;
+    margin: 6px 0;
 }
 
-.price-period {
+.pricing-card .price-period,
+.pricing-card .price-sub {
     color: #666;
-    margin-bottom: 1.5rem;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+}
+
+.pricing-card .pricing-highlight {
+    color: #666;
+    margin: 0 auto var(--space-4);
+    max-width: min(28em, 100%);
+    font-size: var(--text-sm);
+    line-height: 1.45;
+    text-align: center;
 }
 
 .pricing-description {
@@ -919,15 +1025,21 @@ section {
     line-height: 1.3;
 }
 
-.pricing-features {
+.pricing-features,
+.pricing-card .features {
     list-style: none;
-    margin-bottom: 2rem;
+    margin: 16px 0;
+    padding: 0;
     text-align: left;
 }
 
-.pricing-features li {
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #eee;
+.pricing-features li,
+.pricing-card .features li {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    padding: 0;
+    border-bottom: none;
 }
 
 .pricing-features li:before {
@@ -935,6 +1047,52 @@ section {
     color: var(--primary-color);
     font-weight: bold;
     margin-right: 0.5rem;
+}
+
+.pricing-card .btn,
+.pricing-card button {
+    margin-top: 12px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+/* Discovery Call — softer than paid tiers (pricing-online) */
+.discovery-card {
+    opacity: 0.92;
+}
+
+.discovery-card .price {
+    opacity: 0.85;
+    font-weight: 500;
+}
+
+.discovery-card .secondary-button,
+.discovery-card button {
+    background-color: transparent;
+    border: 1px solid #3d2b1f;
+    color: #3d2b1f;
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 12px;
+    padding: 8px 16px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: center;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.discovery-card .secondary-button:hover {
+    background-color: rgba(61, 43, 31, 0.06);
+    color: #3d2b1f;
 }
 
 /* Booking Section */
@@ -1004,7 +1162,7 @@ section {
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: var(--space-4);
 }
 
 /* Payment page */
@@ -1655,8 +1813,23 @@ section {
 .footer {
     background-color: var(--text-color);
     color: var(--white);
-    padding: 3rem 0 1rem;
+    padding: var(--space-7) 0;
     margin-top: 4rem;
+    opacity: 0.95;
+}
+
+.footer p {
+    font-size: var(--text-sm);
+    opacity: 0.9;
+}
+
+.footer a {
+    font-size: var(--text-sm);
+    opacity: 0.85;
+}
+
+.footer a:hover {
+    opacity: 1;
 }
 
 .footer-content {
@@ -1666,7 +1839,16 @@ section {
     margin-bottom: 2rem;
 }
 
-.footer-section h3,
+.footer h3,
+.footer .footer-brand,
+.footer .footer-title {
+    font-size: var(--text-lg);
+    line-height: 1.3;
+    font-weight: 500;
+    margin-bottom: var(--space-2);
+    color: var(--secondary-color);
+}
+
 .footer-section h4 {
     margin-bottom: 1rem;
     color: var(--secondary-color);
@@ -1770,13 +1952,14 @@ section {
         width: 100%;
     }
 
-    .services-layout {
+    .services-layout,
+    .services-grid {
         grid-template-columns: 1fr;
-        gap: 3rem;
+        gap: var(--space-6);
     }
 
     .services-column {
-        gap: 3rem;
+        gap: var(--space-6);
     }
 
     .services-organisations {
@@ -1789,7 +1972,8 @@ section {
         padding: 2.1rem 1.2rem 2.25rem 1.65rem;
     }
 
-    .pricing-grid {
+    .pricing-grid,
+    .pricing-container {
         grid-template-columns: 1fr;
     }
 
@@ -4478,22 +4662,29 @@ textarea:focus {
   }
 
   /* Pricing cards — lighter, compact, easier to scan */
-  .pricing-card {
+  .pricing-grid,
+  .pricing-container {
+    gap: var(--space-6);
+  }
+
+  .pricing-card,
+  .card,
+  .booking-card {
     max-width: 340px;
     margin: 0 auto;
-    padding: 20px 18px;
+    padding: var(--space-5);
     border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    box-shadow: none;
   }
 
   .pricing-card h3 {
-    font-size: clamp(20px, 5vw, 24px);
-    margin-bottom: 8px;
+    font-size: clamp(16px, 4vw, 19px);
+    margin-bottom: 6px;
   }
 
   .pricing-card .price {
-    margin: 8px 0;
-    font-size: clamp(38px, 9.6vw, 48px);
+    margin: 6px 0;
+    font-size: clamp(30px, 8vw, 38px);
     line-height: 1.1;
   }
 
@@ -4502,15 +4693,23 @@ textarea:focus {
   }
 
   .pricing-card li {
-    margin-bottom: 6px;
-    font-size: clamp(16px, 3.9vw, 17px);
+    margin-bottom: 8px;
+    font-size: clamp(14px, 3.5vw, 16px);
     line-height: 1.45;
   }
 
   .pricing-card .price-period,
-  .pricing-card .value-line {
-    font-size: clamp(15px, 3.78vw, 17px);
+  .pricing-card .value-line,
+  .pricing-card .pricing-highlight {
+    font-size: clamp(13px, 3.2vw, 15px);
     line-height: 1.45;
+  }
+
+  .pricing-card .btn,
+  .pricing-card button,
+  .pricing-card .secondary-button {
+    font-size: clamp(13px, 3.2vw, 15px);
+    padding: 8px 16px;
   }
 
   /* Cal.com / booking embed — extra inset so users can scroll past the iframe on touch */
