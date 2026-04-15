@@ -4718,12 +4718,14 @@ textarea:focus {
   }
 
   .hero .hero-subtext {
+    order: 8;
+    margin-top: 20px;
     margin-bottom: 14px;
   }
 
   .hero .hero-statement {
     order: 10;
-    margin-top: 20px;
+    margin-top: 0;
     margin-bottom: 0;
     opacity: 1;
     font-style: italic;
@@ -4739,7 +4741,7 @@ textarea:focus {
 
   .hero-text .hero-buttons,
   .hero-text .cta-group {
-    order: 5;
+    order: 3;
     margin: 0;
     width: 100%;
     max-width: 100%;
