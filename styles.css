@@ -4219,31 +4219,29 @@ textarea:focus {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
   }
 
   .navbar .logo {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
+    position: static;
+    transform: none;
+    text-align: left;
     white-space: nowrap;
     margin-left: 0;
-    margin-right: 0;
-    pointer-events: none;
-    max-width: min(calc(100vw - 72px), 320px);
+    margin-right: auto;
+    pointer-events: auto;
+    max-width: calc(100vw - 72px);
     box-sizing: border-box;
   }
 
   .navbar .logo .logo-link {
     pointer-events: auto;
     max-width: 100%;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
-  /* Wordmark: between legacy shrink and full h1 scale — max legibility within bar + no overlap menu */
   .navbar .logo-text {
-    font-size: clamp(22px, 2.9vw + 11px, 27.5px);
+    font-size: clamp(24px, 3.2vw + 12px, 30px);
     line-height: 1.08;
     max-width: 100%;
     min-width: 0;
@@ -4664,8 +4662,8 @@ textarea:focus {
 
   .hero-image {
     order: -1;
-    width: 100%;
-    max-width: 100%;
+    width: 80%;
+    max-width: 80%;
     margin-bottom: 0;
     transform: none;
   }
