@@ -4662,8 +4662,8 @@ textarea:focus {
 
   .hero-image {
     order: -1;
-    width: 80%;
-    max-width: 80%;
+    width: 100%;
+    max-width: 100%;
     margin-bottom: 0;
     transform: none;
   }
@@ -4714,7 +4714,13 @@ textarea:focus {
   }
 
   .hero .hero-statement {
-    margin-bottom: 28px;
+    order: 10;
+    margin-top: 20px;
+    margin-bottom: 0;
+    opacity: 1;
+    font-style: italic;
+    font-weight: 400;
+    color: #6b5e59;
   }
 
   .hero-text .hero-subtext,
@@ -4725,6 +4731,7 @@ textarea:focus {
 
   .hero-text .hero-buttons,
   .hero-text .cta-group {
+    order: 5;
     margin: 0;
     width: 100%;
     max-width: 100%;
