@@ -1,5 +1,5 @@
 /* Reset and Base Styles */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@200;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inclusive+Sans:ital,wght@0,400..700;1,400..700&display=swap');
 
 * {
     margin: 0;
@@ -15,8 +15,8 @@
     --primary-color: #539fa2;
     --secondary-color: #e2bbab;
     /* Refined accent (replaces burnt orange for nav & non-warning UI) */
-    --burnt-orange: #7a1e3a;
-    --accent-burgundy-hover: #5a1a32;
+    --burnt-orange: #2e000e;
+    --accent-burgundy-hover: #1a0008;
     --text-color: #271209;
     --white: #ffffff;
     --light-bg: #faf8f6;
@@ -45,9 +45,9 @@
     --text-base: 0.95rem;
     --text-md: 1.1rem;
     --text-lg: 1.4rem;
-    --text-xl: 1.8rem;
-    --text-2xl: 2.2rem;
-    --text-3xl: 2.8rem;
+    --text-xl: 2.2rem;
+    --text-2xl: 2.4rem;
+    --text-3xl: 3.4rem;
 
     /* Layout */
     --container-width: 1100px;
@@ -63,7 +63,7 @@ html {
 }
 
 body {
-    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Inclusive Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     color: var(--text-color);
     line-height: var(--lh-body);
     background-color: var(--warm-bg);
@@ -78,7 +78,7 @@ p {
 
 /* All headings should be bold */
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-weight: 700;
     letter-spacing: var(--heading-tracking);
 }
@@ -159,16 +159,16 @@ h3 {
 }
 
 .logo-text .brand {
-    font-family: 'Playfair Display', serif;
-    font-size: 0.75em;
-    font-weight: 600;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1em;
+    font-weight: 700;
     color: #5A1A32;
     letter-spacing: 0.02em;
     transform: translateX(12px);
 }
 
 .logo-text .descriptor {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
     font-size: 0.75em;
     font-weight: 400;
     color: inherit;
@@ -197,7 +197,7 @@ h3 {
 .nav-links {
     display: flex;
     list-style: none;
-    gap: 28px;
+    gap: 22px;
     align-items: center;
     flex-wrap: nowrap;
 }
@@ -210,18 +210,24 @@ h3 {
 .nav-links a,
 .nav-menu .nav-link {
     text-decoration: none;
-    font-family: 'Manrope', sans-serif;
-    font-size: 1.08rem;
+    font-family: 'Inclusive Sans', sans-serif;
+    font-size: 0.98rem;
     line-height: 1.45;
     font-weight: 500;
     color: #5A1A32;
-    transition: color 0.3s ease;
+    transition: color 0.25s ease, transform 0.25s ease;
     white-space: nowrap;
+    display: inline-block;
+    padding: 6px 4px;
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
 }
 
 .nav-links a:hover,
 .nav-menu .nav-link:hover {
     color: var(--accent-burgundy-hover);
+    transform: translateY(-2px);
 }
 
 .nav-menu .nav-link.nav-link--active {
@@ -515,7 +521,7 @@ h3 {
 
 .hero p:not(.hero-subtext):not(.hero-statement),
 .hero-text p:not(.hero-subtext):not(.hero-statement) {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
     font-size: var(--text-md);
     line-height: 1.48;
     color: #6b5a54;
@@ -538,12 +544,12 @@ h3 {
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
     font-size: 1.19rem;
     line-height: 1.4;
     padding: 14px 24px;
     font-weight: 500;
-    border-radius: 50px;
+    border-radius: 12px;
     text-decoration: none;
     transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
     border: none;
@@ -556,7 +562,9 @@ h3 {
 }
 
 .hero .btn-primary:hover {
-    background-color: #366b62;
+    background-color: var(--burnt-orange);
+    transform: none;
+    box-shadow: none;
 }
 
 .hero .btn-secondary {
@@ -594,7 +602,7 @@ h3 {
 .btn {
     display: inline-block;
     padding: 10px 18px;
-    border-radius: 50px;
+    border-radius: 12px;
     text-decoration: none;
     font-weight: 200;
     transition: all 0.3s ease;
@@ -603,7 +611,7 @@ h3 {
     font-size: var(--text-sm);
     line-height: 1.45;
     text-align: center;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
     letter-spacing: 0.5px;
 }
 
@@ -689,7 +697,7 @@ section {
 }
 
 .section-title {
-    font-size: 2.75rem;
+    font-size: var(--text-2xl);
     text-align: center;
     margin-bottom: var(--space-6);
     color: var(--text-color);
@@ -737,7 +745,7 @@ section {
 }
 
 .service-badge {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
     font-size: 0.8125rem;
     font-weight: 500;
     letter-spacing: 0.04em;
@@ -756,7 +764,7 @@ section {
 }
 
 .service-audience {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
     font-size: 0.98rem;
     line-height: 1.32;
     color: var(--text-color);
@@ -769,7 +777,7 @@ section {
     color: var(--text-color);
     line-height: var(--body-copy-leading);
     font-size: var(--body-copy-size);
-    max-width: min(var(--text-measure), 100%);
+    max-width: min(24rem, 100%);
     margin: 0;
 }
 
@@ -782,15 +790,15 @@ section {
     border: 1px solid #3A7D73;
     color: #3A7D73;
     background: transparent;
-    border-radius: 40px;
+    border-radius: 12px;
     font-weight: 500;
     letter-spacing: 0.4px;
 }
 
 .services .service-cta.btn-secondary:hover {
-    background: #7A2E3A;
+    background: #2e000e;
     color: #ffffff;
-    border-color: #7A2E3A;
+    border-color: #2e000e;
     transform: translateY(-1px);
 }
 
@@ -811,7 +819,7 @@ section {
 }
 
 .services-organisations__title {
-    font-size: clamp(1.45rem, 2.8vw, 1.85rem);
+    font-size: clamp(1.8rem, 3.2vw, 2.2rem);
     margin: 0 0 0.5rem;
     color: var(--primary-color);
     font-weight: 700;
@@ -853,7 +861,7 @@ section {
 }
 
 .services-organisations-card__title {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     margin: 0 0 0.42rem;
     color: var(--primary-color);
     font-weight: 700;
@@ -870,15 +878,15 @@ section {
 .services .services-organisations-card .service-cta.btn-secondary {
     margin-top: 0;
     align-self: flex-start;
-    border-color: #7A2E3A;
-    color: #7A2E3A;
+    border-color: #2e000e;
+    color: #2e000e;
     background: transparent;
 }
 
 .services .services-organisations-card .service-cta.btn-secondary:hover {
-    background: #3A7D73;
+    background: var(--burnt-orange);
     color: #ffffff;
-    border-color: #3A7D73;
+    border-color: var(--burnt-orange);
     transform: translateY(-1px);
 }
 
@@ -971,7 +979,7 @@ section {
 }
 
 .pricing-card.featured {
-    border: 1.5px solid #7a1e3a;
+    border: 1.5px solid #2e000e;
     background-color: var(--warm-bg);
     transform: none;
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
@@ -1008,7 +1016,7 @@ section {
     top: -15px;
     left: 50%;
     transform: translateX(-50%);
-    background: #7A1E3A;
+    background: #2e000e;
     color: #ffffff;
     padding: 6px 14px;
     border-radius: 20px;
@@ -1022,7 +1030,7 @@ section {
 .badge.most-popular-badge {
     font-size: 0.7rem;
     padding: 6px 14px;
-    border-radius: 999px;
+    border-radius: 12px;
     background-color: rgba(128, 32, 52, 0.9);
     color: #ffffff;
     letter-spacing: 0.04em;
@@ -1119,7 +1127,7 @@ section {
     box-sizing: border-box;
     margin-top: 12px;
     padding: 8px 16px;
-    border-radius: 50px;
+    border-radius: 12px;
     text-decoration: none;
     font-size: 0.9rem;
     line-height: 1.45;
@@ -1189,7 +1197,7 @@ section {
     border: 2px solid var(--warm-accent);
     border-radius: 12px;
     font-size: 1.2rem;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
     font-weight: 200;
     transition: border-color 0.3s ease;
     background-color: var(--warm-bg);
@@ -1315,7 +1323,7 @@ section {
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
 }
 
 .time-slot:hover {
@@ -1485,7 +1493,7 @@ section {
 #ui-overlay-root .ui-modal button,
 #ui-overlay-root .ui-modal .ui-modal-dismiss {
     padding: 10px 16px;
-    border-radius: 999px;
+    border-radius: 12px;
     background: #5f2a0a;
     color: #ffffff;
     font-size: 14px;
@@ -1641,7 +1649,7 @@ section {
     cursor: pointer;
     padding: 0;
     margin: 0;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
     font-weight: 500;
     line-height: 1.2;
 }
@@ -1747,7 +1755,7 @@ section {
 }
 
 .auth-link {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
     font-size: 0.9rem;
     color: #2A9D8F;
     text-decoration: none;
@@ -1819,7 +1827,7 @@ section {
 }
 
 .no-sessions {
-    text-align: center;
+    text-align: left;
     color: #666;
     padding: 2rem;
 }
@@ -1979,7 +1987,7 @@ section {
     }
 
     .section-title {
-        font-size: 2.25rem;
+        font-size: 2.75rem;
     }
 
     .hero-buttons {
@@ -2176,7 +2184,7 @@ textarea:focus {
     padding: 12px 24px;
     background: #3A7D73;
     color: #ffffff;
-    border-radius: 30px;
+    border-radius: 12px;
     font-size: 1.08rem;
     line-height: 1.45;
     text-decoration: none;
@@ -2198,7 +2206,7 @@ textarea:focus {
     color: rgba(107, 90, 69, 0.78);
     text-decoration: none;
     border: 1px solid rgba(107, 90, 69, 0.22);
-    border-radius: 999px;
+    border-radius: 12px;
     background: transparent;
     transition:
       color 0.2s ease,
@@ -2232,7 +2240,7 @@ textarea:focus {
     background: #3a7d73;
     color: #ffffff;
     border: none;
-    border-radius: 30px;
+    border-radius: 12px;
     font-size: 1.08rem;
     line-height: 1.45;
     font-weight: 500;
@@ -2372,7 +2380,7 @@ textarea:focus {
 .pillar-tagline {
   font-style: italic;
   font-size: 1.15rem;
-  color: #7a1e3a;
+  color: #2e000e;
   margin-top: 0;
   margin-bottom: 14px;
   line-height: 1.4;
@@ -2450,7 +2458,7 @@ textarea:focus {
   max-width: 40rem;
   margin: 0 auto 1.15rem;
   line-height: 1.5;
-  text-align: center;
+  text-align: left;
 }
 
 .training-narrative {
@@ -2537,7 +2545,7 @@ textarea:focus {
 }
 
 .about-page .quality-card h3 {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   line-height: 1.3;
   font-weight: 600;
   margin-bottom: 10px;
@@ -2563,8 +2571,8 @@ textarea:focus {
 }
 
 .about-page section h2 {
-  font-size: clamp(1.65rem, 3.6vw, 1.9rem);
-  line-height: 1.25;
+  font-size: var(--text-2xl);
+  line-height: 1.15;
   font-weight: 600;
   color: #2a211c;
 }
@@ -2640,7 +2648,7 @@ textarea:focus {
   max-width: 580px;
   margin: 16px auto 0;
   line-height: var(--body-copy-leading);
-  text-align: center;
+  text-align: left;
   font-size: var(--body-copy-size);
   color: rgba(0, 0, 0, 0.8);
 }
@@ -2689,7 +2697,7 @@ textarea:focus {
 }
 
 .closing-headline {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 2.2rem;
     line-height: 1.2;
     color: #2E1C16;
@@ -2709,7 +2717,7 @@ textarea:focus {
 }
 
 .closing-copy p {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
     font-size: 1.05rem;
     line-height: 1.6;
     color: #6B5A54;
@@ -2730,7 +2738,7 @@ textarea:focus {
     font-size: var(--body-copy-size);
     line-height: 1.45;
     padding: 12px 26px;
-    border-radius: 50px;
+    border-radius: 12px;
 }
 
 .closing-cta .btn-primary:hover {
@@ -2885,11 +2893,11 @@ textarea:focus {
 .checkout .payment-card > .badge {
   font-size: 12px;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: 12px;
   background: #f3e8ea;
-  color: #7a1e3a;
+  color: #2e000e;
   font-weight: 500;
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Inclusive Sans', sans-serif;
   position: static;
   transform: none;
   left: auto;
@@ -2905,11 +2913,11 @@ textarea:focus {
   justify-content: center;
   gap: 10px;
   padding: 16px 36px;
-  border-radius: 999px;
+  border-radius: 12px;
   font-size: 1.08rem;
   line-height: 1.45;
   font-weight: 600;
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Inclusive Sans', sans-serif;
   border: none;
   cursor: pointer;
   text-decoration: none;
@@ -2952,7 +2960,7 @@ textarea:focus {
 .checkout .payment-card .hint {
   font-size: 13px;
   color: #5f5f5f;
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Inclusive Sans', sans-serif;
   font-weight: 200;
   margin: 0;
   text-align: center;
@@ -2963,7 +2971,7 @@ textarea:focus {
   display: block;
   text-align: center;
   padding: 16px;
-  border-radius: 40px;
+  border-radius: 12px;
   margin-bottom: 16px;
   font-weight: 600;
   text-decoration: none;
@@ -3052,8 +3060,8 @@ textarea:focus {
 
 /* Session Credits CTA; ~20% smaller than global .primary-btn */
 .portal-page #credit-cta.primary-btn {
-  background: #7A1E3A;
-  border-color: #7A1E3A;
+  background: #2e000e;
+  border-color: #2e000e;
   padding: 10px 21px;
   font-size: 1.08rem;
   line-height: 1.45;
@@ -3083,7 +3091,7 @@ textarea:focus {
   color: rgba(107, 90, 69, 0.82);
   text-decoration: none;
   border: 1px solid rgba(107, 90, 69, 0.24);
-  border-radius: 999px;
+  border-radius: 12px;
   background: transparent;
   box-shadow: none;
   transform: none;
@@ -3137,7 +3145,7 @@ textarea:focus {
 }
 
 .dashboard-card h3 {
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
   margin-bottom: 14px;
 }
 
@@ -3254,6 +3262,7 @@ textarea:focus {
   margin-top: 4px;
   margin-bottom: 0;
   line-height: 1.5;
+  text-align: left;
 }
 
 .credit-display {
@@ -3425,7 +3434,7 @@ textarea:focus {
 }
 
 .modal-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 20px;
@@ -3449,7 +3458,7 @@ textarea:focus {
 
 .logout-modal .modal-card .primary-btn {
   padding: 12px 22px;
-  border-radius: 999px;
+  border-radius: 12px;
   background-color: #3b1406;
   color: #ffffff;
   border: none;
@@ -3457,7 +3466,7 @@ textarea:focus {
   font-size: 0.9rem;
   line-height: 1.45;
   font-weight: 500;
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Inclusive Sans', sans-serif;
   transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -3475,7 +3484,7 @@ textarea:focus {
 
 .logout-modal .modal-card .secondary-btn {
   padding: 12px 22px;
-  border-radius: 999px;
+  border-radius: 12px;
   border: 1px solid #3b1406;
   background: transparent;
   color: #3b1406;
@@ -3483,7 +3492,7 @@ textarea:focus {
   font-size: 0.9rem;
   line-height: 1.45;
   font-weight: 500;
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Inclusive Sans', sans-serif;
   transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -3577,7 +3586,7 @@ textarea:focus {
   background: #3b1408;
   color: #ffffff;
   padding: 12px 26px;
-  border-radius: 30px;
+  border-radius: 12px;
   text-decoration: none;
   font-size: 1.08rem;
   line-height: 1.45;
@@ -3598,7 +3607,7 @@ textarea:focus {
   border: 2px solid #3b1408;
   background: transparent;
   padding: 10px 24px;
-  border-radius: 30px;
+  border-radius: 12px;
   color: #3b1408;
   text-decoration: none;
   font-size: 1.08rem;
@@ -3943,14 +3952,14 @@ textarea:focus {
 .reset-room-page .reset-room-price-label strong {
     font-weight: 700;
     color: var(--text-color);
-    font-family: 'Playfair Display', serif;
+    font-family: 'Cormorant Garamond', serif;
 }
 
 .reset-room-page .reset-room-price-hint {
     font-weight: 400;
     font-size: 0.86em;
     color: rgba(39, 18, 9, 0.56);
-    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Inclusive Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .reset-room-page .reset-room-price-sep {
@@ -4115,6 +4124,155 @@ textarea:focus {
     }
 }
 
+/* Reset Room — Pricing Section */
+.reset-room-page .pricing-section {
+  padding: 80px 20px;
+  text-align: center;
+  background-color: var(--light-bg);
+  border-top: 1px solid rgba(39, 18, 9, 0.06);
+}
+
+.reset-room-page .pricing-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.reset-room-page .pricing-subtext {
+  max-width: 600px;
+  margin: 0 auto 50px;
+  opacity: 0.8;
+  font-size: var(--body-copy-size);
+  line-height: var(--body-copy-leading);
+}
+
+.reset-room-page .reset-room-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 60px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.reset-room-page .pricing-section .pricing-card {
+  background: #f8f6f4;
+  padding: 32px;
+  border-radius: 20px;
+  text-align: left;
+  transition: all 0.2s ease;
+  max-width: none;
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+
+.reset-room-page .pricing-section .pricing-card.primary {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.reset-room-page .pricing-section .pricing-card.subtle {
+  opacity: 0.85;
+}
+
+.reset-room-page .pricing-section .pricing-card h3 {
+  margin-bottom: 6px;
+  font-size: var(--text-xl);
+}
+
+.reset-room-page .pricing-tag {
+  font-size: 0.875rem;
+  opacity: 0.7;
+  margin-bottom: 20px;
+}
+
+.reset-room-page .pricing-features {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 24px;
+}
+
+.reset-room-page .pricing-features li {
+  margin-bottom: 10px;
+  position: relative;
+  padding-left: 18px;
+  font-size: var(--body-copy-size);
+  line-height: var(--body-copy-leading);
+}
+
+.reset-room-page .pricing-features li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  opacity: 0.5;
+}
+
+.reset-room-page .pricing-price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.reset-room-page .pricing-note {
+  font-size: 0.8125rem;
+  opacity: 0.6;
+}
+
+.reset-room-page .pricing-cta {
+  text-align: center;
+  padding-top: 60px;
+  padding-bottom: 20px;
+  margin-top: 0;
+  border-top: 1px solid rgba(39, 18, 9, 0.06);
+  background: linear-gradient(
+      180deg,
+      rgba(248, 242, 235, 0.88) 0%,
+      rgba(238, 230, 222, 0.42) 38%,
+      transparent 100%
+  );
+}
+
+.reset-room-page .pricing-cta h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.reset-room-page .pricing-cta p {
+  margin-bottom: 24px;
+  opacity: 0.8;
+  font-size: var(--body-copy-size);
+  line-height: var(--body-copy-leading);
+}
+
+.reset-room-page .cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.reset-room-page .cta-buttons .btn-secondary {
+  background-color: transparent;
+  color: var(--text-color);
+  border: 2px solid var(--text-color);
+}
+
+.reset-room-page .cta-buttons .btn-secondary:hover {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border-color: var(--primary-color);
+}
+
+@media (max-width: 900px) {
+  .reset-room-page .reset-room-pricing-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+}
+
 /* --- PWA install banner (js/pwa-install.js) --- */
 .install-banner {
   position: fixed;
@@ -4148,7 +4306,7 @@ textarea:focus {
 .install-banner__text,
 .install-banner__steps {
   margin: 0 0 14px;
-  font-family: 'Manrope', system-ui, sans-serif;
+  font-family: 'Inclusive Sans', system-ui, sans-serif;
   font-size: 0.95rem;
   font-weight: 500;
   line-height: 1.45;
@@ -4187,10 +4345,10 @@ textarea:focus {
   justify-content: center;
   min-height: 48px;
   padding: 12px 20px;
-  font-family: 'Manrope', system-ui, sans-serif;
+  font-family: 'Inclusive Sans', system-ui, sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
-  border-radius: 999px;
+  border-radius: 12px;
   cursor: pointer;
   border: 2px solid transparent;
   transition:
@@ -4453,7 +4611,7 @@ textarea:focus {
   }
 
   .services .services-organisations__sub {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
     font-size: clamp(16px, 3.9vw, 17px);
     font-weight: 400;
     line-height: 1.46;
@@ -4607,7 +4765,7 @@ textarea:focus {
     background: none;
     border: none;
     padding: 0;
-    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Inclusive Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     color: rgba(39, 18, 9, 0.75);
     width: 100%;
     max-width: 100%;

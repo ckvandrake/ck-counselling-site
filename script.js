@@ -922,8 +922,10 @@ function updateNavFromAuth() {
             if (logoutNavLink) {
                 if (authed) {
                     logoutNavLink.style.display = 'inline-block';
+                    if (logoutNavLink.parentElement) logoutNavLink.parentElement.style.display = '';
                 } else {
                     logoutNavLink.style.display = 'none';
+                    if (logoutNavLink.parentElement) logoutNavLink.parentElement.style.display = 'none';
                 }
                 logoutNavLink.onclick = null;
             }
@@ -933,6 +935,7 @@ function updateNavFromAuth() {
             }
             if (logoutNavLink) {
                 logoutNavLink.style.display = 'none';
+                if (logoutNavLink.parentElement) logoutNavLink.parentElement.style.display = 'none';
                 logoutNavLink.onclick = null;
             }
         });
@@ -942,6 +945,7 @@ function updateNavFromAuth() {
         }
         if (logoutNavLink) {
             logoutNavLink.style.display = 'none';
+            if (logoutNavLink.parentElement) logoutNavLink.parentElement.style.display = 'none';
             logoutNavLink.onclick = null;
         }
     }
