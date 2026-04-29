@@ -400,6 +400,7 @@ async function initDashboard() {
     await loadCredits(user);
     await loadLastSession(user);
     await loadUpcomingSessions(user);
+    await loadUserResources();
 
     requestAnimationFrame(function () {
         requestAnimationFrame(function () {
@@ -412,5 +413,51 @@ async function initDashboard() {
 
 window.addEventListener('DOMContentLoaded', initDashboard);
 
-// (format helpers removed — dashboard renders dates directly)
-// Logout: handled globally by script.js → logout confirmation modal + confirm-logout signOut
+async function loadUserResources() {
+    try {
+        var supabase = window.supabaseClient;
+        if (!supabase) return;
+
+        var result = await supabase.auth.getUser();
+        var user = result.data && result.data.user;
+        if (!user) return;
+
+        var profileResult = await supabase
+            .from('profiles')
+            .select('payment_custom')
+            .eq('id', user.id)
+            .single();
+
+        var card = document.getElementById('custom-payment-card');
+        if (!card) return;
+
+        if (profileResult.error) {
+            console.error('Error fetching profile:', profileResult.error);
+            card.classList.add('hidden');
+            card.href = '#';
+            card.removeAttribute('target');
+            card.removeAttribute('rel');
+            return;
+        }
+
+        var raw = profileResult.data && profileResult.data.payment_custom;
+        var url = raw != null ? String(raw).trim() : '';
+        if (url && /^https?:\/\//i.test(url) === false) {
+            url = 'https://' + url.replace(/^\/+/, '');
+        }
+
+        if (url) {
+            card.classList.remove('hidden');
+            card.href = url;
+            card.setAttribute('target', '_blank');
+            card.setAttribute('rel', 'noopener noreferrer');
+        } else {
+            card.classList.add('hidden');
+            card.href = '#';
+            card.removeAttribute('target');
+            card.removeAttribute('rel');
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}

@@ -1136,19 +1136,23 @@ document.querySelectorAll('.about-page .expand-toggle').forEach((toggle) => {
     });
 });
 
-// Smooth scroll for anchor links
+// Smooth scroll for same-page #section links only (not bare #, #login, or URLs updated later e.g. profile payment card)
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
-        if (href !== '#' && href !== '#login') {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
+        if (!href || !href.startsWith('#')) {
+            return;
+        }
+        if (href === '#' || href === '#login') {
+            return;
+        }
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         }
     });
 });
