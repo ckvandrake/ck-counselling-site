@@ -413,6 +413,21 @@ async function initDashboard() {
 
 window.addEventListener('DOMContentLoaded', initDashboard);
 
+function applyNotionResourceLinks(notionPageUrl) {
+    var url = notionPageUrl != null ? String(notionPageUrl).trim() : '';
+    if (!url) return;
+
+    var cards = document.querySelectorAll(
+        '.resources-grid .resource-card:not(#custom-payment-card)'
+    );
+    if (cards.length < 2) return;
+
+    cards[0].href = url;
+    cards[0].setAttribute('target', '_blank');
+    cards[1].href = url;
+    cards[1].setAttribute('target', '_blank');
+}
+
 async function loadUserResources() {
     try {
         var supabase = window.supabaseClient;
@@ -424,7 +439,7 @@ async function loadUserResources() {
 
         var profileResult = await supabase
             .from('profiles')
-            .select('payment_custom')
+            .select('payment_custom, notion_page_url')
             .eq('id', user.id)
             .single();
 
@@ -438,6 +453,10 @@ async function loadUserResources() {
             card.removeAttribute('target');
             card.removeAttribute('rel');
             return;
+        }
+
+        if (profileResult.data && profileResult.data.notion_page_url != null) {
+            applyNotionResourceLinks(profileResult.data.notion_page_url);
         }
 
         var raw = profileResult.data && profileResult.data.payment_custom;
