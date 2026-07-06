@@ -10,29 +10,29 @@
     var paypalLink = "#";
 
     if (plan === "single") {
-        title = "Single Session";
-        price = "$120";
+        title = "1 Hour Session";
+        price = "$149";
         wiseLink = "PASTE_WISE_LINK_SINGLE";
         paypalLink = "PASTE_PAYPAL_LINK_SINGLE";
     }
 
     if (plan === "bundle") {
-        title = "Discount Bundle";
-        price = "$960";
+        title = "12 Hour Deep Work";
+        price = "$1080";
         wiseLink = "PASTE_WISE_LINK_BUNDLE";
         paypalLink = "PASTE_PAYPAL_LINK_BUNDLE";
     }
 
     if (plan === "couples") {
-        title = "Couples Package";
-        price = "$500";
+        title = "Couples Intensive";
+        price = "$599";
         wiseLink = "PASTE_WISE_LINK_COUPLES";
         paypalLink = "PASTE_PAYPAL_LINK_COUPLES";
     }
 
     if (plan === "4pack") {
-        title = "4 Session Package";
-        price = "$400";
+        title = "4 Hour Package";
+        price = "$499";
         wiseLink = "PASTE_WISE_LINK_4PACK";
         paypalLink = "PASTE_PAYPAL_LINK_4PACK";
     }
